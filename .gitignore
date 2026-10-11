@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Builds and generated types
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+*.tsbuildinfo
+extension/.output/
+extension/.wxt/
+
+# Local environment and credentials (keep templates)
+.env*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+supabase/.temp/
+.vercel/
+
+# Tests and local review output
+coverage/
+playwright-report/
+test-results/
+/artifacts/
+.impeccable/hook.cache.json
+.impeccable/mocks/
+
+# Logs and caches
+*.log
+.npm/
+.cache/
+
+# OS and editor files
+.DS_Store
+._*
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

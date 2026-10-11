@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "extension/entrypoints/popup/style.css"
+        ],
+        "createdAt": "2026-10-11T11:29:29.308Z",
+        "reason": "Codex design decision: preserve the existing popup typography during the user-requested burnt copper palette refinement; this task changes colour, and Inter was already used in this stylesheet."
+      }
+    ]
+  }
+}

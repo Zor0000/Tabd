@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, tests, and builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            extension/package-lock.json
+      - name: Install dashboard dependencies
+        run: npm ci
+      - name: Install extension dependencies
+        run: npm ci --prefix extension
+      - name: Lint
+        run: npm run lint
+      - name: Check dashboard types
+        run: npm run typecheck
+      - name: Run unit and database tests
+        run: npm test
+      - name: Build dashboard
+        run: npm run build
+      - name: Build extension
+        run: npm run build --prefix extension
+      - name: Check extension types
+        run: npm run typecheck --prefix extension
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run desktop and mobile browser tests
+        run: npm run test:e2e
+      - name: Run extension smoke test
+        run: npm run test:extension
