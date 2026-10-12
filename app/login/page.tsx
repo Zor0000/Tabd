@@ -5,6 +5,8 @@ import { useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { browserClient, configured } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { AuthWordmark } from "@/components/auth-wordmark";
+
 export default function Login() {
   const router = useRouter();
   const [signup, setSignup] = useState(false);
@@ -14,6 +16,12 @@ export default function Login() {
   const [password, setPassword] = useState("");
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!configured) {
+      setMessage(
+        "Account access is not connected yet. Explore the preview library below.",
+      );
+      return;
+    }
     setBusy(true);
     setMessage("");
     try {
@@ -40,100 +48,102 @@ export default function Login() {
     }
   }
   return (
-    <main className="auth-page">
-      <div className="auth-card">
-        <Link href="/" className="brand">
-          <span className="brand-symbol">
-            <i />
-            <i />
-            <i />
-          </span>
-          tabd<span className="brand-period">.</span>
+    <main className="auth-split">
+      <AuthWordmark />
+      <section
+        className="auth-account"
+        aria-label={signup ? "Create your account" : "Sign in to Tabd"}
+      >
+        <Link href="/preview" className="auth-back">
+          Explore preview <ArrowRight size={14} />
         </Link>
-        <h1>
-          {!configured
-            ? "Make room for your library."
-            : signup
-              ? "Your next good find starts here."
-              : "Welcome back."}
-        </h1>
-        <p>
-          {!configured
-            ? "The dashboard is ready to connect to your Supabase project."
-            : signup
-              ? "Create your own little corner of the web."
+        <div className="auth-account-inner">
+          <Link href="/" className="brand">
+            tabd<span className="brand-period">.</span>
+          </Link>
+          <h1>
+            {signup ? "Make yourself at home." : "Good to have you back."}
+          </h1>
+          <p>
+            {signup
+              ? "A place for everything worth saving."
               : "Your useful things, right where you left them."}
-        </p>
-        {!configured ? (
-          <>
-            <ol className="auth-setup-list">
-              <li>Create a Supabase project.</li>
-              <li>
-                Copy <code>.env.example</code> to <code>.env.local</code> and
-                add your project URL and publishable key.
-              </li>
-              <li>Run the included SQL migration.</li>
-              <li>Restart the app and create your account.</li>
-            </ol>
-            <p className="form-message">
-              See README.md for the full setup, including Chrome extension
-              configuration.
-            </p>
-            <Button asChild>
-              <a href="/preview">
-                Explore the preview library <ArrowRight size={15} />
-              </a>
+          </p>
+          <div className="auth-mode" aria-label="Account options">
+            <button
+              type="button"
+              aria-pressed={!signup}
+              onClick={() => {
+                setSignup(false);
+                setMessage("");
+              }}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              aria-pressed={signup}
+              onClick={() => {
+                setSignup(true);
+                setMessage("");
+              }}
+            >
+              Sign up
+            </button>
+          </div>
+          <form className="sheet-form" onSubmit={submit}>
+            <label>
+              Email
+              <input
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                minLength={8}
+                autoComplete={signup ? "new-password" : "current-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={signup ? "At least 8 characters" : "Your password"}
+                required
+              />
+            </label>
+            {message && (
+              <p className="form-message" role="status">
+                {message}
+              </p>
+            )}
+            <Button disabled={busy || !configured} type="submit">
+              {busy && <Loader2 size={15} className="spin" />}
+              {signup ? "Create account" : "Sign in"}
+              <ArrowRight size={16} />
             </Button>
-          </>
-        ) : (
-          <>
-            <form className="sheet-form" onSubmit={submit}>
-              <label>
-                Email
-                <input
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                />
-              </label>
-              <label>
-                Password
-                <input
-                  type="password"
-                  minLength={8}
-                  autoComplete={signup ? "new-password" : "current-password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  required
-                />
-              </label>
-              {message && (
-                <p className="form-message" role="status">
-                  {message}
-                </p>
-              )}
-              <Button disabled={busy} type="submit">
-                {busy ? <Loader2 size={15} className="spin" /> : null}
-                {signup ? "Create account" : "Sign in"}
-                <ArrowRight size={15} />
-              </Button>
-            </form>
-            {process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true" && (
+          </form>
+          {configured &&
+            process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true" && (
               <Button
                 variant="secondary"
                 disabled={busy}
                 onClick={async () => {
                   setBusy(true);
-                  const { error } = await browserClient().auth.signInWithOAuth({
-                    provider: "google",
-                    options: { redirectTo: location.origin + "/auth/callback" },
-                  });
-                  if (error) {
-                    setMessage(error.message);
+                  try {
+                    const { error } =
+                      await browserClient().auth.signInWithOAuth({
+                        provider: "google",
+                        options: {
+                          redirectTo: location.origin + "/auth/callback",
+                        },
+                      });
+                    if (error) throw error;
+                  } catch (e) {
+                    setMessage((e as Error).message);
                     setBusy(false);
                   }
                 }}
@@ -141,22 +151,17 @@ export default function Login() {
                 Continue with Google
               </Button>
             )}
-            <div className="auth-links">
-              <button
-                onClick={() => {
-                  setSignup(!signup);
-                  setMessage("");
-                }}
-              >
-                {signup
-                  ? "Already have an account? Sign in"
-                  : "New here? Create an account"}
-              </button>
-              <a href="/preview">Preview</a>
-            </div>
-          </>
-        )}
-      </div>
+          {!configured && (
+            <p className="auth-preview-note">
+              Account access is coming once your library is connected.{" "}
+              <Link href="/preview">
+                Take a look around <ArrowRight size={12} />
+              </Link>
+            </p>
+          )}
+        </div>
+        <p className="auth-account-footer">Save something good.</p>
+      </section>
     </main>
   );
 }

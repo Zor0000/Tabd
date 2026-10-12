@@ -1,0 +1,752 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-11T20:02:01.973767+00:00",
+  "title": "Design System: Tabd",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Bg",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "tonalRamp": [
+          "oklch(15% 0.0029 264.54)",
+          "oklch(26% 0.0029 264.54)",
+          "oklch(38% 0.0029 264.54)",
+          "oklch(49% 0.0029 264.54)",
+          "oklch(61% 0.0029 264.54)",
+          "oklch(72% 0.0029 264.54)",
+          "oklch(84% 0.0029 264.54)",
+          "oklch(95% 0.0029 264.54)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "subtle": {
+        "role": "neutral",
+        "displayName": "Subtle",
+        "tonalRamp": [
+          "oklch(15% 0.0029 264.54)",
+          "oklch(26% 0.0029 264.54)",
+          "oklch(38% 0.0029 264.54)",
+          "oklch(49% 0.0029 264.54)",
+          "oklch(61% 0.0029 264.54)",
+          "oklch(72% 0.0029 264.54)",
+          "oklch(84% 0.0029 264.54)",
+          "oklch(95% 0.0029 264.54)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Text",
+        "tonalRamp": [
+          "oklch(15% 0.0112 278.12)",
+          "oklch(26% 0.0112 278.12)",
+          "oklch(38% 0.0112 278.12)",
+          "oklch(49% 0.0112 278.12)",
+          "oklch(61% 0.0112 278.12)",
+          "oklch(72% 0.0112 278.12)",
+          "oklch(84% 0.0112 278.12)",
+          "oklch(95% 0.0112 278.12)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0172 273.67)",
+          "oklch(26% 0.0172 273.67)",
+          "oklch(38% 0.0172 273.67)",
+          "oklch(49% 0.0172 273.67)",
+          "oklch(61% 0.0172 273.67)",
+          "oklch(72% 0.0172 273.67)",
+          "oklch(84% 0.0172 273.67)",
+          "oklch(95% 0.0172 273.67)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(15% 0.0055 274.96)",
+          "oklch(26% 0.0055 274.96)",
+          "oklch(38% 0.0055 274.96)",
+          "oklch(49% 0.0055 274.96)",
+          "oklch(61% 0.0055 274.96)",
+          "oklch(72% 0.0055 274.96)",
+          "oklch(84% 0.0055 274.96)",
+          "oklch(95% 0.0055 274.96)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Accent",
+        "tonalRamp": [
+          "oklch(15% 0.2157 37.31)",
+          "oklch(26% 0.2157 37.31)",
+          "oklch(38% 0.2157 37.31)",
+          "oklch(49% 0.2157 37.31)",
+          "oklch(61% 0.2157 37.31)",
+          "oklch(72% 0.2157 37.31)",
+          "oklch(84% 0.2157 37.31)",
+          "oklch(95% 0.2157 37.31)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Accent Hover",
+        "tonalRamp": [
+          "oklch(15% 0.2128 36.36)",
+          "oklch(26% 0.2128 36.36)",
+          "oklch(38% 0.2128 36.36)",
+          "oklch(49% 0.2128 36.36)",
+          "oklch(61% 0.2128 36.36)",
+          "oklch(72% 0.2128 36.36)",
+          "oklch(84% 0.2128 36.36)",
+          "oklch(95% 0.2128 36.36)"
+        ]
+      },
+      "accent-light": {
+        "role": "primary",
+        "displayName": "Accent Light",
+        "tonalRamp": [
+          "oklch(15% 0.0195 50.16)",
+          "oklch(26% 0.0195 50.16)",
+          "oklch(38% 0.0195 50.16)",
+          "oklch(49% 0.0195 50.16)",
+          "oklch(61% 0.0195 50.16)",
+          "oklch(72% 0.0195 50.16)",
+          "oklch(84% 0.0195 50.16)",
+          "oklch(95% 0.0195 50.16)"
+        ]
+      },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Accent Text",
+        "tonalRamp": [
+          "oklch(15% 0.1699 37.41)",
+          "oklch(26% 0.1699 37.41)",
+          "oklch(38% 0.1699 37.41)",
+          "oklch(49% 0.1699 37.41)",
+          "oklch(61% 0.1699 37.41)",
+          "oklch(72% 0.1699 37.41)",
+          "oklch(84% 0.1699 37.41)",
+          "oklch(95% 0.1699 37.41)"
+        ]
+      },
+      "accent-on": {
+        "role": "primary",
+        "displayName": "Accent On",
+        "tonalRamp": [
+          "oklch(15% 0.0303 47.21)",
+          "oklch(26% 0.0303 47.21)",
+          "oklch(38% 0.0303 47.21)",
+          "oklch(49% 0.0303 47.21)",
+          "oklch(61% 0.0303 47.21)",
+          "oklch(72% 0.0303 47.21)",
+          "oklch(84% 0.0303 47.21)",
+          "oklch(95% 0.0303 47.21)"
+        ]
+      },
+      "accent-line": {
+        "role": "primary",
+        "displayName": "Accent Line",
+        "tonalRamp": [
+          "oklch(15% 0.0583 46.40)",
+          "oklch(26% 0.0583 46.40)",
+          "oklch(38% 0.0583 46.40)",
+          "oklch(49% 0.0583 46.40)",
+          "oklch(61% 0.0583 46.40)",
+          "oklch(72% 0.0583 46.40)",
+          "oklch(84% 0.0583 46.40)",
+          "oklch(95% 0.0583 46.40)"
+        ]
+      },
+      "accent-surface": {
+        "role": "primary",
+        "displayName": "Accent Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0100 58.22)",
+          "oklch(26% 0.0100 58.22)",
+          "oklch(38% 0.0100 58.22)",
+          "oklch(49% 0.0100 58.22)",
+          "oklch(61% 0.0100 58.22)",
+          "oklch(72% 0.0100 58.22)",
+          "oklch(84% 0.0100 58.22)",
+          "oklch(95% 0.0100 58.22)"
+        ]
+      },
+      "accent-muted": {
+        "role": "primary",
+        "displayName": "Accent Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0854 44.05)",
+          "oklch(26% 0.0854 44.05)",
+          "oklch(38% 0.0854 44.05)",
+          "oklch(49% 0.0854 44.05)",
+          "oklch(61% 0.0854 44.05)",
+          "oklch(72% 0.0854 44.05)",
+          "oklch(84% 0.0854 44.05)",
+          "oklch(95% 0.0854 44.05)"
+        ]
+      },
+      "reference": {
+        "role": "neutral",
+        "displayName": "Reference",
+        "tonalRamp": [
+          "oklch(15% 0.0332 256.07)",
+          "oklch(26% 0.0332 256.07)",
+          "oklch(38% 0.0332 256.07)",
+          "oklch(49% 0.0332 256.07)",
+          "oklch(61% 0.0332 256.07)",
+          "oklch(72% 0.0332 256.07)",
+          "oklch(84% 0.0332 256.07)",
+          "oklch(95% 0.0332 256.07)"
+        ]
+      },
+      "danger": {
+        "role": "neutral",
+        "displayName": "Danger",
+        "tonalRamp": [
+          "oklch(15% 0.1562 23.71)",
+          "oklch(26% 0.1562 23.71)",
+          "oklch(38% 0.1562 23.71)",
+          "oklch(49% 0.1562 23.71)",
+          "oklch(61% 0.1562 23.71)",
+          "oklch(72% 0.1562 23.71)",
+          "oklch(84% 0.1562 23.71)",
+          "oklch(95% 0.1562 23.71)"
+        ]
+      },
+      "dark-bg": {
+        "role": "neutral",
+        "displayName": "Dark Bg",
+        "tonalRamp": [
+          "oklch(15% 0.0080 274.55)",
+          "oklch(26% 0.0080 274.55)",
+          "oklch(38% 0.0080 274.55)",
+          "oklch(49% 0.0080 274.55)",
+          "oklch(61% 0.0080 274.55)",
+          "oklch(72% 0.0080 274.55)",
+          "oklch(84% 0.0080 274.55)",
+          "oklch(95% 0.0080 274.55)"
+        ]
+      },
+      "dark-rail": {
+        "role": "neutral",
+        "displayName": "Dark Rail",
+        "tonalRamp": [
+          "oklch(15% 0.0082 274.49)",
+          "oklch(26% 0.0082 274.49)",
+          "oklch(38% 0.0082 274.49)",
+          "oklch(49% 0.0082 274.49)",
+          "oklch(61% 0.0082 274.49)",
+          "oklch(72% 0.0082 274.49)",
+          "oklch(84% 0.0082 274.49)",
+          "oklch(95% 0.0082 274.49)"
+        ]
+      },
+      "dark-surface": {
+        "role": "neutral",
+        "displayName": "Dark Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0095 276.70)",
+          "oklch(26% 0.0095 276.70)",
+          "oklch(38% 0.0095 276.70)",
+          "oklch(49% 0.0095 276.70)",
+          "oklch(61% 0.0095 276.70)",
+          "oklch(72% 0.0095 276.70)",
+          "oklch(84% 0.0095 276.70)",
+          "oklch(95% 0.0095 276.70)"
+        ]
+      },
+      "dark-subtle": {
+        "role": "neutral",
+        "displayName": "Dark Subtle",
+        "tonalRamp": [
+          "oklch(15% 0.0111 278.14)",
+          "oklch(26% 0.0111 278.14)",
+          "oklch(38% 0.0111 278.14)",
+          "oklch(49% 0.0111 278.14)",
+          "oklch(61% 0.0111 278.14)",
+          "oklch(72% 0.0111 278.14)",
+          "oklch(84% 0.0111 278.14)",
+          "oklch(95% 0.0111 278.14)"
+        ]
+      },
+      "dark-text": {
+        "role": "neutral",
+        "displayName": "Dark Text",
+        "tonalRamp": [
+          "oklch(15% 0.0053 286.30)",
+          "oklch(26% 0.0053 286.30)",
+          "oklch(38% 0.0053 286.30)",
+          "oklch(49% 0.0053 286.30)",
+          "oklch(61% 0.0053 286.30)",
+          "oklch(72% 0.0053 286.30)",
+          "oklch(84% 0.0053 286.30)",
+          "oklch(95% 0.0053 286.30)"
+        ]
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "Dark Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0173 282.15)",
+          "oklch(26% 0.0173 282.15)",
+          "oklch(38% 0.0173 282.15)",
+          "oklch(49% 0.0173 282.15)",
+          "oklch(61% 0.0173 282.15)",
+          "oklch(72% 0.0173 282.15)",
+          "oklch(84% 0.0173 282.15)",
+          "oklch(95% 0.0173 282.15)"
+        ]
+      },
+      "dark-line": {
+        "role": "neutral",
+        "displayName": "Dark Line",
+        "tonalRamp": [
+          "oklch(15% 0.0143 279.90)",
+          "oklch(26% 0.0143 279.90)",
+          "oklch(38% 0.0143 279.90)",
+          "oklch(49% 0.0143 279.90)",
+          "oklch(61% 0.0143 279.90)",
+          "oklch(72% 0.0143 279.90)",
+          "oklch(84% 0.0143 279.90)",
+          "oklch(95% 0.0143 279.90)"
+        ]
+      },
+      "dark-accent": {
+        "role": "primary",
+        "displayName": "Dark Accent",
+        "tonalRamp": [
+          "oklch(15% 0.1819 40.92)",
+          "oklch(26% 0.1819 40.92)",
+          "oklch(38% 0.1819 40.92)",
+          "oklch(49% 0.1819 40.92)",
+          "oklch(61% 0.1819 40.92)",
+          "oklch(72% 0.1819 40.92)",
+          "oklch(84% 0.1819 40.92)",
+          "oklch(95% 0.1819 40.92)"
+        ]
+      },
+      "dark-accent-hover": {
+        "role": "primary",
+        "displayName": "Dark Accent Hover",
+        "tonalRamp": [
+          "oklch(15% 0.1566 42.17)",
+          "oklch(26% 0.1566 42.17)",
+          "oklch(38% 0.1566 42.17)",
+          "oklch(49% 0.1566 42.17)",
+          "oklch(61% 0.1566 42.17)",
+          "oklch(72% 0.1566 42.17)",
+          "oklch(84% 0.1566 42.17)",
+          "oklch(95% 0.1566 42.17)"
+        ]
+      },
+      "dark-accent-light": {
+        "role": "primary",
+        "displayName": "Dark Accent Light",
+        "tonalRamp": [
+          "oklch(15% 0.0309 44.95)",
+          "oklch(26% 0.0309 44.95)",
+          "oklch(38% 0.0309 44.95)",
+          "oklch(49% 0.0309 44.95)",
+          "oklch(61% 0.0309 44.95)",
+          "oklch(72% 0.0309 44.95)",
+          "oklch(84% 0.0309 44.95)",
+          "oklch(95% 0.0309 44.95)"
+        ]
+      },
+      "dark-accent-text": {
+        "role": "primary",
+        "displayName": "Dark Accent Text",
+        "tonalRamp": [
+          "oklch(15% 0.1123 46.98)",
+          "oklch(26% 0.1123 46.98)",
+          "oklch(38% 0.1123 46.98)",
+          "oklch(49% 0.1123 46.98)",
+          "oklch(61% 0.1123 46.98)",
+          "oklch(72% 0.1123 46.98)",
+          "oklch(84% 0.1123 46.98)",
+          "oklch(95% 0.1123 46.98)"
+        ]
+      },
+      "dark-accent-on": {
+        "role": "primary",
+        "displayName": "Dark Accent On",
+        "tonalRamp": [
+          "oklch(15% 0.0303 47.21)",
+          "oklch(26% 0.0303 47.21)",
+          "oklch(38% 0.0303 47.21)",
+          "oklch(49% 0.0303 47.21)",
+          "oklch(61% 0.0303 47.21)",
+          "oklch(72% 0.0303 47.21)",
+          "oklch(84% 0.0303 47.21)",
+          "oklch(95% 0.0303 47.21)"
+        ]
+      },
+      "dark-accent-line": {
+        "role": "primary",
+        "displayName": "Dark Accent Line",
+        "tonalRamp": [
+          "oklch(15% 0.0642 46.99)",
+          "oklch(26% 0.0642 46.99)",
+          "oklch(38% 0.0642 46.99)",
+          "oklch(49% 0.0642 46.99)",
+          "oklch(61% 0.0642 46.99)",
+          "oklch(72% 0.0642 46.99)",
+          "oklch(84% 0.0642 46.99)",
+          "oklch(95% 0.0642 46.99)"
+        ]
+      },
+      "dark-accent-surface": {
+        "role": "primary",
+        "displayName": "Dark Accent Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0189 52.58)",
+          "oklch(26% 0.0189 52.58)",
+          "oklch(38% 0.0189 52.58)",
+          "oklch(49% 0.0189 52.58)",
+          "oklch(61% 0.0189 52.58)",
+          "oklch(72% 0.0189 52.58)",
+          "oklch(84% 0.0189 52.58)",
+          "oklch(95% 0.0189 52.58)"
+        ]
+      },
+      "dark-accent-muted": {
+        "role": "primary",
+        "displayName": "Dark Accent Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0679 45.85)",
+          "oklch(26% 0.0679 45.85)",
+          "oklch(38% 0.0679 45.85)",
+          "oklch(49% 0.0679 45.85)",
+          "oklch(61% 0.0679 45.85)",
+          "oklch(72% 0.0679 45.85)",
+          "oklch(84% 0.0679 45.85)",
+          "oklch(95% 0.0679 45.85)"
+        ]
+      },
+      "dark-reference": {
+        "role": "neutral",
+        "displayName": "Dark Reference",
+        "tonalRamp": [
+          "oklch(15% 0.0302 261.45)",
+          "oklch(26% 0.0302 261.45)",
+          "oklch(38% 0.0302 261.45)",
+          "oklch(49% 0.0302 261.45)",
+          "oklch(61% 0.0302 261.45)",
+          "oklch(72% 0.0302 261.45)",
+          "oklch(84% 0.0302 261.45)",
+          "oklch(95% 0.0302 261.45)"
+        ]
+      },
+      "dark-danger": {
+        "role": "neutral",
+        "displayName": "Dark Danger",
+        "tonalRamp": [
+          "oklch(15% 0.1137 20.02)",
+          "oklch(26% 0.1137 20.02)",
+          "oklch(38% 0.1137 20.02)",
+          "oklch(49% 0.1137 20.02)",
+          "oklch(61% 0.1137 20.02)",
+          "oklch(72% 0.1137 20.02)",
+          "oklch(84% 0.1137 20.02)",
+          "oklch(95% 0.1137 20.02)"
+        ]
+      },
+      "auth-bg": {
+        "role": "neutral",
+        "displayName": "Auth Bg",
+        "tonalRamp": [
+          "oklch(15% 0.0026 106.45)",
+          "oklch(26% 0.0026 106.45)",
+          "oklch(38% 0.0026 106.45)",
+          "oklch(49% 0.0026 106.45)",
+          "oklch(61% 0.0026 106.45)",
+          "oklch(72% 0.0026 106.45)",
+          "oklch(84% 0.0026 106.45)",
+          "oklch(95% 0.0026 106.45)"
+        ]
+      },
+      "auth-muted": {
+        "role": "neutral",
+        "displayName": "Auth Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0086 260.73)",
+          "oklch(26% 0.0086 260.73)",
+          "oklch(38% 0.0086 260.73)",
+          "oklch(49% 0.0086 260.73)",
+          "oklch(61% 0.0086 260.73)",
+          "oklch(72% 0.0086 260.73)",
+          "oklch(84% 0.0086 260.73)",
+          "oklch(95% 0.0086 260.73)"
+        ]
+      },
+      "auth-line": {
+        "role": "neutral",
+        "displayName": "Auth Line",
+        "tonalRamp": [
+          "oklch(15% 0.0040 106.48)",
+          "oklch(26% 0.0040 106.48)",
+          "oklch(38% 0.0040 106.48)",
+          "oklch(49% 0.0040 106.48)",
+          "oklch(61% 0.0040 106.48)",
+          "oklch(72% 0.0040 106.48)",
+          "oklch(84% 0.0040 106.48)",
+          "oklch(95% 0.0040 106.48)"
+        ]
+      },
+      "metal-start": {
+        "role": "neutral",
+        "displayName": "Metal Start",
+        "tonalRamp": [
+          "oklch(15% 0.0017 247.84)",
+          "oklch(26% 0.0017 247.84)",
+          "oklch(38% 0.0017 247.84)",
+          "oklch(49% 0.0017 247.84)",
+          "oklch(61% 0.0017 247.84)",
+          "oklch(72% 0.0017 247.84)",
+          "oklch(84% 0.0017 247.84)",
+          "oklch(95% 0.0017 247.84)"
+        ]
+      },
+      "metal-mid": {
+        "role": "neutral",
+        "displayName": "Metal Mid",
+        "tonalRamp": [
+          "oklch(15% 0.0043 236.51)",
+          "oklch(26% 0.0043 236.51)",
+          "oklch(38% 0.0043 236.51)",
+          "oklch(49% 0.0043 236.51)",
+          "oklch(61% 0.0043 236.51)",
+          "oklch(72% 0.0043 236.51)",
+          "oklch(84% 0.0043 236.51)",
+          "oklch(95% 0.0043 236.51)"
+        ]
+      },
+      "metal-end": {
+        "role": "neutral",
+        "displayName": "Metal End",
+        "tonalRamp": [
+          "oklch(15% 0.0017 247.84)",
+          "oklch(26% 0.0017 247.84)",
+          "oklch(38% 0.0017 247.84)",
+          "oklch(49% 0.0017 247.84)",
+          "oklch(61% 0.0017 247.84)",
+          "oklch(72% 0.0017 247.84)",
+          "oklch(84% 0.0017 247.84)",
+          "oklch(95% 0.0017 247.84)"
+        ]
+      },
+      "engraving": {
+        "role": "neutral",
+        "displayName": "Engraving",
+        "tonalRamp": [
+          "oklch(15% 0.0066 255.48)",
+          "oklch(26% 0.0066 255.48)",
+          "oklch(38% 0.0066 255.48)",
+          "oklch(49% 0.0066 255.48)",
+          "oklch(61% 0.0066 255.48)",
+          "oklch(72% 0.0066 255.48)",
+          "oklch(84% 0.0066 255.48)",
+          "oklch(95% 0.0066 255.48)"
+        ]
+      },
+      "engraving-stroke": {
+        "role": "neutral",
+        "displayName": "Engraving Stroke",
+        "tonalRamp": [
+          "oklch(15% 0.0105 252.85)",
+          "oklch(26% 0.0105 252.85)",
+          "oklch(38% 0.0105 252.85)",
+          "oklch(49% 0.0105 252.85)",
+          "oklch(61% 0.0105 252.85)",
+          "oklch(72% 0.0105 252.85)",
+          "oklch(84% 0.0105 252.85)",
+          "oklch(95% 0.0105 252.85)"
+        ]
+      },
+      "engraving-light": {
+        "role": "neutral",
+        "displayName": "Engraving Light",
+        "tonalRamp": [
+          "oklch(15% 0.0080 98.88)",
+          "oklch(26% 0.0080 98.88)",
+          "oklch(38% 0.0080 98.88)",
+          "oklch(49% 0.0080 98.88)",
+          "oklch(61% 0.0080 98.88)",
+          "oklch(72% 0.0080 98.88)",
+          "oklch(84% 0.0080 98.88)",
+          "oklch(95% 0.0080 98.88)"
+        ]
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay-light",
+        "value": "0 12px 36px #29221e12",
+        "purpose": "Shared light-theme overlay."
+      },
+      {
+        "name": "overlay-dark",
+        "value": "0 12px 36px #0003",
+        "purpose": "Shared dark-theme overlay."
+      },
+      {
+        "name": "resource-hover",
+        "value": "0 5px 14px #29221e07",
+        "purpose": "Subtle resource hover elevation."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-transition",
+        "value": "0.15s",
+        "purpose": "Background, color and border state changes."
+      },
+      {
+        "name": "auth-spring",
+        "value": "stiffness: 160; damping: 26",
+        "purpose": "Mouse-only cursor-mask following; disabled with reduced motion."
+      },
+      {
+        "name": "auth-mask",
+        "value": "radial-gradient(ellipse 280px 280px at x% y%, #000 0%, transparent 100%)",
+        "purpose": "Reveal a brighter copy of the engraved lettering."
+      },
+      {
+        "name": "auth-reveal",
+        "value": "opacity 0.8s ease",
+        "purpose": "Hover entrance and exit."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "auth-fixed-rail",
+        "value": "1100px"
+      },
+      {
+        "name": "grid-two",
+        "value": "1020px"
+      },
+      {
+        "name": "off-canvas",
+        "value": "760px"
+      },
+      {
+        "name": "auth-stacked",
+        "value": "700px"
+      },
+      {
+        "name": "grid-one",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Shared dashboard action.",
+      "html": "<button class=\"ds-button-primary\">Save resource</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:37px;border:1px solid transparent;padding:8px 14px;border-radius:7px;font:550 12px/1.4 Geist,Arial,sans-serif;cursor:pointer;transition:background .15s,color .15s,border-color .15s;background:var(--accent);color:var(--accent-on);}.ds-button-primary:hover{background:var(--accent-hover)}.ds-button-primary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Shared dashboard action.",
+      "html": "<button class=\"ds-button-secondary\">Save resource</button>",
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:37px;border:1px solid transparent;padding:8px 14px;border-radius:7px;font:550 12px/1.4 Geist,Arial,sans-serif;cursor:pointer;transition:background .15s,color .15s,border-color .15s;background:var(--surface);color:var(--text);border-color:var(--line);}.ds-button-secondary:hover{background:var(--subtle)}.ds-button-secondary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Shared dashboard action.",
+      "html": "<button class=\"ds-button-ghost\">Save resource</button>",
+      "css": ".ds-button-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:37px;border:1px solid transparent;padding:8px 14px;border-radius:7px;font:550 12px/1.4 Geist,Arial,sans-serif;cursor:pointer;transition:background .15s,color .15s,border-color .15s;background:transparent;color:var(--text);}.ds-button-ghost:hover{background:var(--subtle)}.ds-button-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:3px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Extracted library primitive; preview content is illustrative.",
+      "html": "<label class=\"ds-field\">Email<input type=\"email\" placeholder=\"you@example.com\"></label>",
+      "css": ".ds-field{display:grid;gap:8px;color:var(--text);font:550 12px Geist,Arial,sans-serif}.ds-field input{border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text);padding:11px 12px;font-size:12px}.ds-field input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}"
+    },
+    {
+      "name": "Active Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Extracted library primitive; preview content is illustrative.",
+      "html": "<a class=\"ds-nav\" href=\"#library\" aria-current=\"page\">All resources</a>",
+      "css": ".ds-nav{display:flex;padding:9px 11px;border-radius:6px;background:var(--accent-light);color:var(--accent-text);font:550 12px Geist,Arial,sans-serif;text-decoration:none}.ds-nav:hover{background:var(--subtle)}.ds-nav:focus-visible{outline:2px solid var(--accent);outline-offset:3px}"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Extracted library primitive; preview content is illustrative.",
+      "html": "<span class=\"ds-tag\">Design</span>",
+      "css": ".ds-tag{display:inline-block;padding:1px 6px;border-radius:4px;background:var(--subtle);border:1px solid var(--line);color:var(--muted);font:10px Geist,Arial,sans-serif}"
+    },
+    {
+      "name": "Resource Card",
+      "kind": "card",
+      "refersTo": "resource-card",
+      "description": "Extracted library primitive; preview content is illustrative.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-preview\">Website preview</div><a href=\"#resource\">A useful resource</a><footer>To explore</footer></article>",
+      "css": ".ds-card{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);color:var(--text);font:14px Geist,Arial,sans-serif;transition:border-color .2s,box-shadow .2s}.ds-card:hover{border-color:#d8cdc7;box-shadow:0 5px 14px #29221e07}.ds-preview{height:166px;background:var(--subtle);border-bottom:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}.ds-card a{display:block;padding:16px;color:var(--text)}.ds-card a:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}.ds-card footer{border-top:1px solid var(--line);padding:12px;color:var(--muted);font-size:10px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The personal web library",
+    "overview": "Linear clarity and Raindrop-style visual resource cards remain the dashboard's foundation: neutral surfaces, graphite type, fine borders and restrained color. Vivid orange now replaces burnt copper throughout the identity and action system, following the user's Ghost core site reference.\n\nThe account entry adds a tactile silver engraved Tabd mark. Its large sculptural composition belongs to authentication; it does not replace the dashboard's compact navigation, factual website previews or editable resource records.",
+    "keyCharacteristics": [
+      "Clear, compact library controls.",
+      "Neutral surfaces with vivid orange actions.",
+      "Factual visual previews and explicit preview-library labeling.",
+      "Silver geometric lettering on the account entry surface."
+    ],
+    "rules": [],
+    "dos": [
+      "**Do** preserve the dashboard's compact library structure and visual resource cards.",
+      "**Do** use orange tokens consistently across light and dark themes.",
+      "**Do** keep account fields usable when decorative motion is disabled.",
+      "**Do** distinguish preview examples from persisted account data."
+    ],
+    "donts": [
+      "**Don't** restore burnt copper or the earlier violet as the primary accent.",
+      "**Don't** turn the auth artwork into a dashboard hero.",
+      "**Don't** imply that configured authentication has been tested end to end."
+    ]
+  }
+}
