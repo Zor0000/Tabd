@@ -74,6 +74,10 @@ Set `WXT_APP_URL` in `extension/.env` to the exact dashboard origin, including i
 
 The extension needs only `activeTab`, `storage`, and host access to the configured dashboard origin. It does not request browsing history or access to every website. Chrome internal pages cannot be saved. It reads the active tab's URL, title and favicon. The web save form additionally extracts description and Open Graph preview metadata.
 
+The popup follows your system's light or dark appearance. It remembers the last saved collection and shows nested collections with their full path. Title, status, tags, and notes stay behind **Add details**, with the save action always visible. Saving an existing page loads its current details; **Save changes** updates only fields you edit, preserving existing notes and tags. Connection failures can be retried, and expired access prompts you to reconnect.
+
+After rebuilding, click **Reload** on Tabd in `chrome://extensions` to use the updated popup.
+
 ### Linking security
 
 A signed-in web session creates a 256-bit random, account-scoped token, with a 30-day lifetime. Only its SHA-256 hash is stored in PostgreSQL. The web app sends the token directly to an explicitly allowed extension ID using Chrome external messaging. The extension checks the sender's origin, verifies the token against the API, then stores it in extension-local storage. Credentials never travel through a URL or accessible browser cookie. Every extension request resolves the token owner server-side, verifies collection ownership, and scopes all reads/writes to that owner. Revocation is available in Settings. Disconnecting in the popup removes the local token; use **Revoke extension access** to invalidate all issued tokens. Web sign-out alone does not revoke extension links.
@@ -116,6 +120,8 @@ npm run test:extension
 ```
 
 The browser tests start their own preview server on port 3210 with backend credentials disabled. They refuse to reuse an existing server. If the port is occupied, run `TABD_TEST_PORT=3211 npm run test:e2e`. `npm test` includes PGlite schema tests that create two users and verify RLS isolation, ownership integrity, hierarchy constraints, deletion semantics, duplicate constraints, full-text search and atomic open tracking.
+
+`npm run test:extension` loads the built extension in Chromium and exercises saving, duplicate preservation, retries, expired access, restricted pages, keyboard disclosure, and validation with controlled API responses. To capture popup states, run `TABD_EXTENSION_SCREENSHOTS=artifacts/extension npm run test:extension`. These checks do not replace the hosted account acceptance below.
 
 GitHub Actions runs linting, both typechecks, unit/database tests, both production builds, desktop/mobile browser tests, and the extension smoke test on pushes to `main` and pull requests. CI needs no production credentials. Dependabot checks dashboard, extension, and GitHub Actions dependencies monthly.
 
