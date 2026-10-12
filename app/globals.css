@@ -2799,3 +2799,191 @@ button svg {
 .website-capture {
   position: relative;
 }
+
+/* Agent settings extend the library's existing controls and surface tokens. */
+.agent-settings {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px;
+}
+.agent-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.agent-back:hover {
+  color: var(--text);
+}
+.agent-heading {
+  margin: 40px 0 8px;
+}
+.agent-heading h1 {
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.agent-heading p {
+  margin-top: 12px;
+  color: var(--muted);
+  max-width: 65ch;
+}
+.agent-status {
+  min-height: 24px;
+  color: var(--accent-text);
+  margin: 12px 0;
+}
+.agent-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+  gap: 48px;
+  padding: 32px 0;
+  border-top: 1px solid var(--line);
+}
+.agent-section-intro h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.agent-section-intro p,
+.agent-issued p {
+  color: var(--muted);
+}
+.agent-section-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.agent-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 550;
+}
+.agent-field input,
+.agent-field textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 400;
+}
+.agent-field textarea {
+  resize: vertical;
+}
+.agent-copy-row {
+  display: flex;
+  gap: 8px;
+}
+.agent-copy-row input {
+  font-family: monospace;
+  font-size: 12px;
+}
+.agent-copy-row .button {
+  flex-shrink: 0;
+}
+.agent-create {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+.agent-create .agent-field {
+  flex: 1;
+  min-width: 0;
+}
+.agent-create .button {
+  min-height: 44px;
+  flex-shrink: 0;
+}
+.agent-issued {
+  padding: 20px;
+  border: 1px solid var(--accent-line);
+  background: var(--accent-surface);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.agent-issued h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+.agent-issued p {
+  color: var(--accent-muted);
+}
+.agent-issued textarea {
+  font-family: monospace;
+  overflow-wrap: anywhere;
+}
+.agent-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.agent-token-list {
+  list-style: none;
+  padding: 0;
+}
+.agent-token-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.agent-token-list li > div {
+  min-width: 0;
+}
+.agent-token-list strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.agent-token-list span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.agent-token-list .button {
+  flex-shrink: 0;
+}
+.agent-empty {
+  color: var(--muted);
+  padding: 12px 0;
+}
+.agent-examples > p:not(.inline-hint) {
+  font-size: 16px;
+}
+.agent-settings .inline-hint {
+  display: block;
+  font-size: 12px;
+  line-height: 1.6;
+}
+@media (max-width: 700px) {
+  .agent-settings {
+    padding: 24px;
+  }
+  .agent-heading {
+    margin-top: 32px;
+  }
+  .agent-section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 28px 0;
+  }
+  .agent-create {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

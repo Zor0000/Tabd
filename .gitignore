@@ -27,6 +27,7 @@ test-results/
 /artifacts/
 .impeccable/hook.cache.json
 .impeccable/mocks/
+.impeccable/review/
 
 # Logs and caches
 *.log

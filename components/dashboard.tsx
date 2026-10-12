@@ -1026,6 +1026,9 @@ export function Dashboard({
           </Button>
           {!preview && (
             <>
+              <Button variant="secondary" asChild>
+                <a href="/agents">Connect coding agents</a>
+              </Button>
               <Button
                 variant="secondary"
                 onClick={async () => {

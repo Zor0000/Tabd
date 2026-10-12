@@ -12,7 +12,7 @@ async function asUser(id: string) {
 beforeAll(async () => {
   db = new PGlite();
   await db.exec(
-    `create schema auth;create role anon;create role authenticated;create role service_role bypassrls;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;grant usage on schema auth,public to authenticated,service_role;grant execute on function auth.uid() to authenticated,service_role;insert into auth.users values('${alice}'),('${bob}');`,
+    `create schema auth;create role anon;create role authenticated;create role service_role bypassrls;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;grant usage on schema auth,public to authenticated,service_role;grant execute on function auth.uid() to authenticated,service_role;insert into auth.users values('${alice}'),('${bob}');alter default privileges in schema public grant all on tables to anon,authenticated,service_role;`,
   );
   // Supabase owns this schema in production; model its relevant tables for RLS checks.
   await db.exec(`create schema storage;
@@ -306,5 +306,146 @@ describe("real PostgreSQL schema and RLS", () => {
     expect((await db.query(`select * from storage.objects`)).rows).toHaveLength(
       0,
     );
+  });
+  it("isolates agent credentials and preferences and allows immediate revocation", async () => {
+    await db.exec("reset role;");
+    const grants = await db.query<{
+      tokens: boolean;
+      taste: boolean;
+      search: boolean;
+    }>(`select
+      has_table_privilege('anon','public.mcp_tokens','select') as tokens,
+      has_table_privilege('anon','public.taste_profiles','select') as taste,
+      has_function_privilege('anon','public.search_library_references(uuid,text,uuid,text[],boolean,boolean,integer,integer)','execute') as search`);
+    expect(grants.rows[0]).toEqual({
+      tokens: false,
+      taste: false,
+      search: false,
+    });
+    await asUser(alice);
+    const token = (
+      await db.query<{ id: string }>(
+        `insert into mcp_tokens(user_id,name,token_hash) values($1,'Work agent',$2) returning id`,
+        [alice, "b".repeat(64)],
+      )
+    ).rows[0].id;
+    await db.query(
+      `insert into taste_profiles(user_id,preferences) values($1,'Compact dashboards')`,
+      [alice],
+    );
+    await asUser(bob);
+    expect((await db.query("select * from mcp_tokens")).rows).toHaveLength(0);
+    expect((await db.query("select * from taste_profiles")).rows).toHaveLength(
+      0,
+    );
+    await expect(
+      db.query(`insert into taste_profiles(user_id) values($1)`, [alice]),
+    ).rejects.toThrow();
+    await db.query(`delete from mcp_tokens where id=$1`, [token]);
+    await asUser(alice);
+    expect((await db.query("select * from mcp_tokens")).rows).toHaveLength(1);
+    await expect(
+      db.query(`update taste_profiles set user_id=$1`, [bob]),
+    ).rejects.toThrow();
+    await expect(
+      db.query(`update taste_profiles set preferences=repeat('x',5001)`),
+    ).rejects.toThrow();
+    await db.exec("reset role;set role service_role;");
+    expect((await db.query("select * from mcp_tokens")).rows).toHaveLength(1);
+    await expect(db.query("delete from mcp_tokens")).rejects.toThrow();
+    await expect(
+      db.query("update taste_profiles set preferences='changed by agent'"),
+    ).rejects.toThrow();
+    await asUser(alice);
+    await db.query("delete from mcp_tokens where id=$1", [token]);
+    expect((await db.query("select * from mcp_tokens")).rows).toHaveLength(0);
+  });
+
+  it("searches the complete scoped library with ranking, tags, descendants and pagination", async () => {
+    await asUser(alice);
+    const parent = (
+      await db.query<{ id: string }>(
+        `insert into collections(user_id,name) values($1,'MCP project') returning id`,
+        [alice],
+      )
+    ).rows[0].id;
+    const child = (
+      await db.query<{ id: string }>(
+        `insert into collections(user_id,name,parent_id) values($1,'Components',$2) returning id`,
+        [alice, parent],
+      )
+    ).rows[0].id;
+    for (const [slug, favorite, archived, tags] of [
+      ["one", false, false, ["compact"]],
+      ["two", true, false, ["compact"]],
+      ["three", false, true, ["motion"]],
+    ] as const) {
+      await db.query(
+        `insert into bookmarks(user_id,collection_id,url,normalized_url,title,hostname,tags,is_favorite,is_archived) values($1,$2,$3,$3,'Dashboard sidebar','example.com',$4,$5,$6)`,
+        [
+          alice,
+          child,
+          `https://example.com/${slug}`,
+          [...tags],
+          favorite,
+          archived,
+        ],
+      );
+    }
+    const search = (
+      owner: string,
+      query = "dashboard",
+      collection: string | null = parent,
+      tags: string[] = [],
+      favorites = false,
+      archived = false,
+      limit = 21,
+      offset = 0,
+    ) =>
+      db.query<{
+        resource: { url: string; user_id?: string; search_document?: string };
+        relevance: number;
+      }>("select * from search_library_references($1,$2,$3,$4,$5,$6,$7,$8)", [
+        owner,
+        query,
+        collection,
+        tags,
+        favorites,
+        archived,
+        limit,
+        offset,
+      ]);
+    const results = (await search(alice)).rows;
+    expect(results).toHaveLength(2);
+    expect(results[0].resource.url).toBe("https://example.com/two");
+    expect(results[0].relevance).toBeGreaterThan(0);
+    expect(results[0].resource).not.toHaveProperty("user_id");
+    expect(results[0].resource).not.toHaveProperty("search_document");
+    expect(
+      (await search(alice, "dashboard", parent, [], false, true)).rows,
+    ).toHaveLength(3);
+    expect(
+      (await search(alice, "dashboard", parent, [], true)).rows,
+    ).toHaveLength(1);
+    expect(
+      (await search(alice, "dashboard", parent, ["motion"])).rows,
+    ).toHaveLength(0);
+    expect(
+      (await search(alice, "dashboard", parent, ["compact"])).rows,
+    ).toHaveLength(2);
+    expect(
+      (await search(alice, "dashboard", parent, [], false, false, 1, 1)).rows[0]
+        .resource.url,
+    ).toBe("https://example.com/one");
+    expect((await search(alice, "", parent)).rows).toHaveLength(2);
+    expect(
+      (await search(alice, "missing OR sidebar", parent)).rows,
+    ).toHaveLength(2);
+    await asUser(bob);
+    expect((await search(alice)).rows).toHaveLength(0);
+    expect((await search(bob)).rows).toHaveLength(0);
+    await db.exec("reset role;set role service_role;");
+    expect((await search(alice)).rows).toHaveLength(2);
+    expect((await search(bob)).rows).toHaveLength(0);
   });
 });

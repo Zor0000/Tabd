@@ -20,7 +20,7 @@ Save → organize → find → revisit → use. The dashboard comes first, with 
 
 ## Capabilities and Constraints
 
-URL is the only required save input. Optional collection, tags, notes and status. Collections may nest. Archive is independent of status. Secure per-user ownership. No AI, social features or paid subscriptions.
+URL is the only required save input. Optional collection, tags, notes and status. Collections may nest. Archive is independent of status. Secure per-user ownership. Coding agents can retrieve the user's library through five read-only MCP tools, with separate revocable credentials and explicit design preferences. No model inference, social features or paid subscriptions.
 
 ## Brand Commitments
 
