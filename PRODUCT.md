@@ -24,11 +24,11 @@ URL is the only required save input. Optional collection, tags, notes and status
 
 ## Brand Commitments
 
-The user requests Linear's clean interface and Raindrop's visual cards, neutral surfaces and a restrained accent. Original identity. Product name Tabd confirmed by the user. The user selected burnt copper to replace the initial violet accent.
+The user requests Linear's clean interface and Raindrop's visual cards, neutral surfaces and a restrained accent. Original identity. Product name Tabd confirmed by the user. The user replaced burnt copper with vivid orange inspired by the Ghost core site. Preserve the clean dashboard and original Tabd identity; the account entry surface pairs silver engraved geometric lettering with a quiet form.
 
 ## Evidence on Hand
 
-User's detailed pasted brief. No existing code, visual assets or customer data. Preview content must be labeled and must never imply account persistence.
+User's detailed brief and the implemented dashboard, extension, and account entry surface. Preview content must be labeled and must never imply account persistence.
 
 ## Product Principles
 
@@ -36,4 +36,4 @@ Fast saving; search before folder browsing; clear feedback; real persisted opera
 
 ## Open decisions
 
-User confirmed they have not created a Supabase project. Deliver schema and setup instructions; do not change the unrelated Setzo project.
+Supabase is configured in the current app. Authentication has not been verified end to end with a real account. Keep the unrelated Setzo project untouched.

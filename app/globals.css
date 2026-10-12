@@ -7,14 +7,14 @@
   --text: #25262c;
   --muted: #747782;
   --line: #e9eaee;
-  --accent: #b65335;
-  --accent-hover: #a7472c;
-  --accent-light: #f7ede7;
-  --accent-text: #9d452d;
-  --accent-on: #fff;
-  --accent-line: #ead2c6;
-  --accent-surface: #fcf7f3;
-  --accent-muted: #825f50;
+  --accent: #ff5517;
+  --accent-hover: #ef4708;
+  --accent-light: #fff0e8;
+  --accent-text: #b73908;
+  --accent-on: #25150d;
+  --accent-line: #ffd2bd;
+  --accent-surface: #fff8f3;
+  --accent-muted: #8a5138;
   --reference: #788699;
   --shadow: 0 12px 36px #29221e12;
   --danger: #bd4444;
@@ -29,14 +29,14 @@
   --text: #eeeef2;
   --muted: #a4a5b1;
   --line: #303139;
-  --accent: #dc997c;
-  --accent-hover: #edac8c;
-  --accent-light: #382a24;
-  --accent-text: #e7ae92;
-  --accent-on: #211713;
-  --accent-line: #574037;
-  --accent-surface: #29231f;
-  --accent-muted: #c59e8c;
+  --accent: #ff753e;
+  --accent-hover: #ff8959;
+  --accent-light: #38261e;
+  --accent-text: #ffac83;
+  --accent-on: #25150d;
+  --accent-line: #68402c;
+  --accent-surface: #2b211b;
+  --accent-muted: #d3a18a;
   --reference: #9faabd;
   --shadow: 0 12px 36px #0003;
   --danger: #f39595;
@@ -2528,4 +2528,260 @@ button svg {
 .resources-list .preview-editorial p,
 .resources-list .preview-visit {
   display: none;
+}
+
+/* Auth: the reference's engraved silver surface, paired with a quiet account rail. */
+.auth-split {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  min-height: 100svh;
+  background: #f8f8f6;
+  color: #25262c;
+  color-scheme: light;
+  --text: #25262c;
+  --muted: #686b70;
+  --surface: #fff;
+  --line: #dededb;
+  --accent: #ff5517;
+  --accent-hover: #ef4708;
+  --accent-text: #b73908;
+  --accent-on: #25150d;
+}
+.auth-sculpture {
+  position: relative;
+  min-width: 0;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(125deg, #e2e3e4, #cdd0d2 50%, #dfe0e1);
+  box-shadow: inset 0 1px 10px #fff9;
+}
+.auth-metal-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.15;
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23888' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+.auth-art-nav {
+  position: absolute;
+  top: 38px;
+  right: 38px;
+  z-index: 4;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #55595c;
+}
+.auth-art-nav a {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.auth-art-nav a:hover {
+  color: #b73908;
+}
+.auth-engraving {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 4%;
+}
+.auth-engraving svg {
+  width: 100%;
+  overflow: visible;
+  transform: translateY(5%);
+}
+.auth-light-reveal {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.auth-sculpture:hover .auth-light-reveal {
+  opacity: 1;
+}
+.auth-art-footer {
+  position: absolute;
+  bottom: 30px;
+  left: 38px;
+  right: 38px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 11px;
+  color: #55595c;
+  z-index: 4;
+}
+.auth-account {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 36px clamp(24px, 2.2vw, 48px) 28px;
+}
+.auth-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-end;
+  font-size: 12px;
+  color: #686b70;
+}
+.auth-back:hover {
+  color: var(--accent-text);
+}
+.auth-account-inner {
+  padding: 32px 0;
+  width: 100%;
+  max-width: 360px;
+  margin: auto;
+}
+.auth-account-inner .brand {
+  padding: 0;
+  font-size: 32px;
+  margin-bottom: 42px;
+}
+.auth-account-inner h1 {
+  font-size: clamp(24px, 2.1vw, 34px);
+  font-weight: 550;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  margin: 0 0 14px;
+}
+.auth-account-inner > p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #686b70;
+}
+.auth-mode {
+  display: flex;
+  gap: 24px;
+  margin: 32px 0 25px;
+  border-bottom: 1px solid #dededb;
+}
+.auth-mode button {
+  position: relative;
+  padding: 0 0 12px;
+  font-size: 13px;
+  color: #686b70;
+}
+.auth-mode button[aria-pressed="true"] {
+  color: #25262c;
+}
+.auth-mode button[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  bottom: -1px;
+  inset-inline: 0;
+  background: #ff5517;
+}
+.auth-account .sheet-form {
+  padding: 0;
+  gap: 20px;
+}
+.auth-account .sheet-form label {
+  font-size: 12px;
+}
+.auth-account input {
+  border: 1px solid #dededb;
+  border-radius: 5px;
+  min-height: 45px;
+  background: #fff;
+  font-size: 13px;
+}
+.auth-account input::placeholder {
+  color: #737577;
+}
+.auth-account .button {
+  width: 100%;
+  min-height: 45px;
+  border-radius: 5px;
+  margin-top: 4px;
+  justify-content: space-between;
+}
+.auth-account .button:disabled {
+  opacity: 1;
+  background: #ffb18f;
+  color: #673018;
+  cursor: not-allowed;
+}
+.auth-account .auth-preview-note {
+  font-size: 11px;
+  margin-top: 18px;
+}
+.auth-preview-note a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b73908;
+  margin-top: 8px;
+}
+.auth-account-footer {
+  font-size: 11px;
+  color: #686b70;
+  text-align: center;
+}
+@media (max-width: 1100px) {
+  .auth-split {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+@media (max-width: 700px) {
+  .auth-split {
+    grid-template-columns: 1fr;
+  }
+  .auth-sculpture {
+    min-height: 260px;
+    height: 32svh;
+  }
+  .auth-art-nav {
+    top: 20px;
+    right: 22px;
+    font-size: 10px;
+  }
+  .auth-art-footer {
+    bottom: 16px;
+    left: 22px;
+    right: 22px;
+    font-size: 9px;
+  }
+  .auth-art-footer span:first-child {
+    display: none;
+  }
+  .auth-art-footer {
+    justify-content: flex-end;
+  }
+  .auth-engraving {
+    padding: 26px 9% 0;
+  }
+  .auth-engraving svg {
+    max-height: 180px;
+  }
+  .auth-account {
+    padding: 24px;
+  }
+  .auth-account-inner {
+    padding: 25px 0 35px;
+  }
+  .auth-account-inner .brand {
+    display: none;
+  }
+  .auth-account-inner h1 {
+    font-size: 30px;
+  }
+  .auth-account-footer {
+    margin: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .auth-light-reveal {
+    display: none;
+  }
 }

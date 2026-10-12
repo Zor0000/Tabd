@@ -1,9 +1,9 @@
 :root {
-  --accent: #b65335;
-  --accent-hover: #a7472c;
-  --accent-light: #f7ede7;
-  --accent-text: #9d452d;
-  --accent-line: #ead2c6;
+  --accent: #ff5517;
+  --accent-hover: #ef4708;
+  --accent-light: #fff0e8;
+  --accent-text: #b73908;
+  --accent-line: #ffd2bd;
 }
 * {
   box-sizing: border-box;
@@ -128,7 +128,7 @@ button:disabled {
   border: 0;
   width: 100%;
   background: var(--accent);
-  color: white;
+  color: #25150d;
   font-size: 12px;
   font-weight: 550;
   padding: 12px;
