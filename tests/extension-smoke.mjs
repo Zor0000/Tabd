@@ -94,10 +94,16 @@ try {
     const page = await context.newPage();
     page.on("pageerror", (error) => errors.push(error.message));
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
-    // Only tab metadata is supplied by the fixture; storage, worker and popup run in Chrome.
+    // Supply tab metadata and capture account navigation without requiring a web server.
+    // Storage, worker and popup still run in Chrome.
     await page.addInitScript(
       ({ url, title }) => {
         chrome.tabs.query = async () => [{ url, title }];
+        const createTab = chrome.tabs.create.bind(chrome.tabs);
+        chrome.tabs.create = async (options) => {
+          await chrome.storage.session.set({ testConnectUrl: options.url });
+          return createTab({ ...options, url: "about:blank" });
+        };
       },
       { url, title },
     );
@@ -131,7 +137,13 @@ try {
   const connectedPage = context.waitForEvent("page");
   await page.getByRole("button", { name: "Connect to Tabd" }).click();
   const accountPage = await connectedPage;
-  await accountPage.waitForURL(`${appUrl}/connect?extension=${id}`);
+  assert.equal(
+    await worker.evaluate(
+      async () =>
+        (await chrome.storage.session.get("testConnectUrl")).testConnectUrl,
+    ),
+    `${appUrl}/connect?extension=${id}`,
+  );
   await accountPage.close();
 
   page = await open();
