@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Copy, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -44,9 +44,15 @@ export function AgentSettings() {
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [createError, setCreateError] = useState("");
+  const issuedField = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   const [endpoint, setEndpoint] = useState("");
   const [reload, setReload] = useState(0);
+
+  useEffect(() => {
+    if (issued) issuedField.current?.focus();
+  }, [issued]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -83,11 +89,13 @@ export function AgentSettings() {
   async function run(action: string, work: () => Promise<void>) {
     setBusy(action);
     setError("");
+    setCreateError("");
     setMessage("");
     try {
       await work();
     } catch (e) {
-      setError((e as Error).message);
+      if (action === "create") setCreateError((e as Error).message);
+      else setError((e as Error).message);
       if (e instanceof SignInRequired) router.replace("/login?next=%2Fagents");
     } finally {
       setBusy(null);
@@ -202,9 +210,13 @@ export function AgentSettings() {
                 required
                 placeholder="e.g. My coding workspace"
                 disabled={!ready || busy !== null}
+                aria-describedby={
+                  createError ? "agent-create-error" : undefined
+                }
               />
             </label>
             <Button
+              type="submit"
               disabled={
                 !ready || busy !== null || !name.trim() || issued !== null
               }
@@ -213,6 +225,11 @@ export function AgentSettings() {
               {busy === "create" ? "Creating…" : "Create token"}
             </Button>
           </form>
+          {createError && (
+            <p id="agent-create-error" className="form-message" role="alert">
+              {createError}
+            </p>
+          )}
           {issued && (
             <div className="agent-issued">
               <h3>Copy your token</h3>
@@ -220,6 +237,7 @@ export function AgentSettings() {
               <label className="agent-field">
                 New agent token
                 <textarea
+                  ref={issuedField}
                   aria-label="New agent token"
                   readOnly
                   rows={3}

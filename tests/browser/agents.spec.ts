@@ -46,8 +46,23 @@ test("agent settings creates and revokes access and persists explicit taste", as
     "tabd_mcp_" + "a".repeat(64),
   );
   await expect(
+    page.getByLabel("New agent token", { exact: true }),
+  ).toBeFocused();
+  await expect(
     page.getByRole("button", { name: "Create token", exact: true }),
   ).toBeDisabled();
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.getByRole("button", { name: "Copy token", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Token copied.");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "tabd_mcp_" + "a".repeat(64),
+  );
+  await mkdir(".impeccable/review", { recursive: true });
+  await page.screenshot({
+    path: `.impeccable/review/agent-token-created-${testInfo.project.name}.png`,
+    fullPage: true,
+    animations: "disabled",
+  });
   await page.getByRole("button", { name: "I’ve saved it" }).click();
   await expect(page.getByLabel("New agent token", { exact: true })).toHaveCount(
     0,
@@ -107,4 +122,52 @@ test("agent settings fails safely and offers retry when setup is unavailable", a
     page.getByRole("button", { name: "Save preferences" }),
   ).toBeDisabled();
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+});
+
+test("token creation errors stay beside the form and allow retry", async ({
+  page,
+}) => {
+  let attempts = 0;
+  await page.route("**/api/mcp-tokens", async (route) => {
+    if (route.request().method() !== "POST") return route.fulfill({ json: [] });
+    attempts += 1;
+    if (attempts === 1)
+      return route.fulfill({
+        status: 403,
+        json: { error: "Invalid request origin." },
+      });
+    return route.fulfill({
+      status: 201,
+      json: {
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        name: "Work agent",
+        created_at: "2026-10-13T00:00:00Z",
+        expires_at: "2099-11-11T00:00:00Z",
+        token: "tabd_mcp_" + "a".repeat(64),
+      },
+    });
+  });
+  await page.route("**/api/taste-profile", (route) =>
+    route.fulfill({ json: { preferences: "", updated_at: null } }),
+  );
+  await page.goto("/agents");
+  const name = page.getByLabel("Agent name", { exact: true });
+  const create = page.getByRole("button", {
+    name: "Create token",
+    exact: true,
+  });
+  await name.fill("Work agent");
+  await create.click();
+  await expect(page.locator("#agent-create-error")).toHaveText(
+    "Invalid request origin.",
+  );
+  await expect(page.locator("#agent-create-error")).toBeInViewport();
+  await expect(name).toHaveValue("Work agent");
+  await expect(create).toBeEnabled();
+  await create.click();
+  await expect(page.locator("#agent-create-error")).toHaveCount(0);
+  await expect(
+    page.getByLabel("New agent token", { exact: true }),
+  ).toBeFocused();
+  expect(attempts).toBe(2);
 });
