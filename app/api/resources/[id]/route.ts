@@ -1,3 +1,5 @@
+import { after } from "next/server";
+import { recoverResourceMetadata } from "@/lib/resource-metadata";
 import {
   actor,
   body,
@@ -45,6 +47,8 @@ export async function PATCH(request: Request, ctx: Context) {
       throw new ApiError("This URL is already saved.", 409);
     if (error) throw error;
     if (!data) throw new ApiError("Resource not found.", 404);
+    if (parsed.data.url)
+      after(() => recoverResourceMetadata(db, userId, id).catch(() => {}));
     return json(data);
   } catch (e) {
     return failure(e);

@@ -26,6 +26,16 @@ export type Resource = {
   last_opened_at: string | null;
   created_at: string;
   updated_at: string;
+  metadata_status?: "pending" | "fetching" | "ready" | "retry" | "blocked";
+  metadata_attempts?: number;
+  metadata_next_retry_at?: string | null;
+  metadata_checked_at?: string | null;
+  metadata_snapshot?: Partial<
+    Pick<
+      Resource,
+      "title" | "description" | "favicon_url" | "preview_image_url"
+    >
+  >;
 };
 export type ResourceInput = Pick<
   Resource,
@@ -38,4 +48,4 @@ export type ResourceInput = Pick<
   | "status"
   | "favicon_url"
   | "preview_image_url"
->;
+> & { metadata_snapshot?: Resource["metadata_snapshot"] };

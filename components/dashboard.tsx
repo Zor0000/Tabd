@@ -149,6 +149,28 @@ export function Dashboard({
       setLoading(false);
     }
   }, [preview]);
+  const enrichResource = useCallback((incoming: Resource) => {
+    const replace = (previous: Resource[]) => {
+      const current = previous.find((item) => item.id === incoming.id);
+      if (
+        !current ||
+        current.url !== incoming.url ||
+        Date.parse(current.updated_at) >= Date.parse(incoming.updated_at)
+      )
+        return previous;
+      return previous.map((item) =>
+        item.id === incoming.id ? incoming : item,
+      );
+    };
+    setResources(replace);
+    setSearchResults((previous) => {
+      if (!previous) return previous;
+      const updated = replace(previous.resources);
+      return updated === previous.resources
+        ? previous
+        : { ...previous, resources: updated };
+    });
+  }, []);
   useEffect(() => {
     // Initial fetch synchronizes the component with the external account database.
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -854,6 +876,7 @@ export function Dashboard({
                       (c) => c.id === r.collection_id,
                     )}
                     onUpdate={update}
+                    onEnrich={enrichResource}
                     onEdit={(r) => {
                       setEditing(r);
                       setSaveOpen(true);

@@ -12,8 +12,15 @@ async function asUser(id: string) {
 beforeAll(async () => {
   db = new PGlite();
   await db.exec(
-    `create schema auth;create role authenticated;create role service_role bypassrls;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;grant usage on schema auth,public to authenticated,service_role;grant execute on function auth.uid() to authenticated,service_role;insert into auth.users values('${alice}'),('${bob}');`,
+    `create schema auth;create role anon;create role authenticated;create role service_role bypassrls;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;grant usage on schema auth,public to authenticated,service_role;grant execute on function auth.uid() to authenticated,service_role;insert into auth.users values('${alice}'),('${bob}');`,
   );
+  // Supabase owns this schema in production; model its relevant tables for RLS checks.
+  await db.exec(`create schema storage;
+    create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+    create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text references storage.buckets(id),name text not null);
+    alter table storage.objects enable row level security;
+    grant usage on schema storage to authenticated,service_role;
+    grant select,insert,update,delete on storage.objects to authenticated,service_role;`);
   for (const migration of readdirSync("supabase/migrations")
     .filter((name) => name.endsWith(".sql"))
     .sort()) {
@@ -171,5 +178,133 @@ describe("real PostgreSQL schema and RLS", () => {
     expect(
       (await db.query("select * from extension_tokens")).rows,
     ).toHaveLength(0);
+  });
+  it("completes metadata without overwriting concurrent manual edits", async () => {
+    await asUser(alice);
+    const id = (
+      await db.query<{ id: string }>(
+        `insert into bookmarks(user_id,url,normalized_url,title,hostname,personal_note) values($1,'https://metadata.example/','https://metadata.example/','metadata.example','metadata.example','Keep my note') returning id`,
+        [alice],
+      )
+    ).rows[0].id;
+    await db.query(
+      `update bookmarks set metadata_status='fetching',metadata_attempts=1,title='My manual title' where id=$1`,
+      [id],
+    );
+    const result = (
+      await db.query<{
+        value: {
+          title: string;
+          description: string;
+          personal_note: string;
+          metadata_status: string;
+          metadata_next_retry_at: string | null;
+        };
+      }>(
+        `select complete_bookmark_metadata($1,$2,'https://metadata.example/',1,'Fetched title','Fetched description','https://metadata.example/icon.png','https://metadata.example/og.png') as value`,
+        [id, alice],
+      )
+    ).rows[0].value;
+    expect(result).toMatchObject({
+      title: "My manual title",
+      description: "Fetched description",
+      personal_note: "Keep my note",
+      metadata_status: "ready",
+      metadata_next_retry_at: null,
+    });
+    await asUser(bob);
+    expect(
+      (
+        await db.query<{ value: unknown }>(
+          `select complete_bookmark_metadata($1,$2,'https://metadata.example/',1,'Stolen','','','') as value`,
+          [id, alice],
+        )
+      ).rows[0].value,
+    ).toBeNull();
+  });
+
+  it("invalidates old URL metadata and rejects stale completion", async () => {
+    await asUser(alice);
+    const id = (
+      await db.query<{ id: string }>(
+        `insert into bookmarks(user_id,url,normalized_url,title,hostname,description,metadata_status,metadata_attempts,metadata_snapshot,preview_image_url) values($1,'https://before.example/','https://before.example/','Before','before.example','Automatic description','fetching',2,'{"title":"Before","description":"Automatic description"}','https://before.example/og.png') returning id`,
+        [alice],
+      )
+    ).rows[0].id;
+    await db.query(
+      `update bookmarks set url='https://after.example/',normalized_url='https://after.example/',hostname='after.example' where id=$1`,
+      [id],
+    );
+    expect(
+      (
+        await db.query(
+          `select title,description,preview_image_url,metadata_status,metadata_attempts from bookmarks where id=$1`,
+          [id],
+        )
+      ).rows[0],
+    ).toEqual({
+      title: "after.example",
+      description: "",
+      preview_image_url: null,
+      metadata_status: "pending",
+      metadata_attempts: 0,
+    });
+    expect(
+      (
+        await db.query<{ value: unknown }>(
+          `select complete_bookmark_metadata($1,$2,'https://before.example/',2,'Stale','Stale','','') as value`,
+          [id, alice],
+        )
+      ).rows[0].value,
+    ).toBeNull();
+    expect(
+      (
+        await db.query<{ count: number }>(
+          `update bookmarks set metadata_status='fetching',metadata_attempts=1 where id=$1 and metadata_attempts=0 returning id`,
+          [id],
+        )
+      ).rows,
+    ).toHaveLength(1);
+    expect(
+      (
+        await db.query(
+          `update bookmarks set metadata_attempts=1 where id=$1 and metadata_attempts=0 returning id`,
+          [id],
+        )
+      ).rows,
+    ).toHaveLength(0);
+  });
+
+  it("keeps screenshot storage private and denies access after bookmark deletion", async () => {
+    await asUser(alice);
+    const id = (
+      await db.query<{ id: string }>(
+        `insert into bookmarks(user_id,url,normalized_url,title,hostname) values($1,'https://capture.example/','https://capture.example/','Capture','capture.example') returning id`,
+        [alice],
+      )
+    ).rows[0].id;
+    const path = `${alice}/${id}/hash.jpg`;
+    await db.query(
+      `insert into storage.objects(bucket_id,name) values('website-previews',$1)`,
+      [path],
+    );
+    await asUser(bob);
+    expect((await db.query(`select * from storage.objects`)).rows).toHaveLength(
+      0,
+    );
+    await expect(
+      db.query(
+        `insert into storage.objects(bucket_id,name) values('website-previews',$1)`,
+        [path],
+      ),
+    ).rejects.toThrow();
+    await asUser(alice);
+    expect((await db.query(`select * from storage.objects`)).rows).toHaveLength(
+      1,
+    );
+    await db.query(`delete from bookmarks where id=$1`, [id]);
+    expect((await db.query(`select * from storage.objects`)).rows).toHaveLength(
+      0,
+    );
   });
 });
