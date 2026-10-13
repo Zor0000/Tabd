@@ -24,9 +24,9 @@ Project: `sdzrbpehdgogldydzsde` (Tabd).
 - Secure email change already enabled.
 - Applied minimum password length 12 and require-current-password on password updates.
 - Verified live using a temporary account: incorrect current password rejected, 11-character password rejected, correct change accepted, recovery reset accepted without current password, reused recovery token rejected. Test account removed afterwards.
-- Custom SMTP is off. Sender name and email templates are **not active**.
+- On 2026-10-14, confirmed custom SMTP is enabled with sender name `Tabd`, host `smtp.resend.com`, and port 465. Stored credentials remain hidden. Inbox delivery and branded templates still need verification.
 - Created Resend sending-domain entry `auth.tab-dd.tech`. Receiving remains off.
-- Registrar shows domain registration in progress. Adding the DKIM record failed; no DNS records were successfully added. Public NS lookup returned no result.
+- Initial registrar activation blocked DNS changes on 2026-10-13. On 2026-10-14, public DNS resolves the expected DKIM TXT record and both sending CNAME records. The user reports Resend verification is complete.
 
 ## Finish email setup after domain activation
 
@@ -45,7 +45,7 @@ Project: `sdzrbpehdgogldydzsde` (Tabd).
 3. **Production readiness:** Confirm all merged migrations are applied, screenshot storage and Chromium runtime requirements from PR #6 are met, production URLs/environment variables are correct, and errors/latency are observable. Test rollback and backup recovery.
 4. **Public launch readiness:** Publish accurate onboarding/support/privacy information and extension installation instructions; measure signup completion, first save, and returning use. Test the exact release build before announcing it.
 
-These gates support a direct launch; no beta phase is required. Domain activation and email delivery remain release blockers.
+These gates support a direct launch; no beta phase is required. Domain DNS and SMTP configuration are complete. Real-inbox delivery and deployed auth-route/template checks remain release gates.
 
 ## Branch context
 
