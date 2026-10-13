@@ -33,59 +33,143 @@ export function ResourceCard({
   const curated = sitePreview(r.url);
   const [details, setDetails] = useState<{
     url: string;
+    updated_at?: string;
+    metadata_status?: Resource["metadata_status"];
     title?: string;
     description?: string;
-    preview_image_url?: string;
-    favicon_url?: string;
+    preview_image_url?: string | null;
+    favicon_url?: string | null;
   } | null>(null);
-  const enriched = details?.url === r.url ? details : null;
+  const enriched =
+    details?.url === r.url &&
+    (!details.updated_at ||
+      Date.parse(details.updated_at) >= Date.parse(r.updated_at))
+      ? details
+      : null;
   const title =
     r.title === r.hostname
       ? curated?.title || enriched?.title || r.title
       : r.title;
   const description =
     r.description || curated?.description || enriched?.description;
-  const image =
-    curated?.image || r.preview_image_url || enriched?.preview_image_url;
-  const art = image?.startsWith("preview:") ? image.slice(8) : curated?.art;
+  const demoArt = r.preview_image_url?.startsWith("preview:")
+    ? r.preview_image_url.slice(8)
+    : undefined;
+  const capture =
+    !demoArt && (enriched?.metadata_status || r.metadata_status) !== "blocked"
+      ? `/api/resources/${r.id}/preview?v=${encodeURIComponent(r.url)}`
+      : undefined;
+  const [failedImages, setFailedImages] = useState<string[]>([]);
+  const [loadedImage, setLoadedImage] = useState<string>();
+  const captureRetry = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const captureAttempts = useRef({ url: r.url, count: 0 });
+  const image = [
+    capture,
+    curated?.image,
+    r.preview_image_url,
+    enriched?.preview_image_url,
+  ].find(
+    (source) =>
+      source &&
+      !source.startsWith("preview:") &&
+      !failedImages.includes(source),
+  );
+  const art = image ? undefined : demoArt || curated?.art;
+  useEffect(() => () => clearTimeout(captureRetry.current), [r.url, capture]);
+  function imageFailed(source: string) {
+    setFailedImages((failed) => [...failed, source]);
+    if (source !== capture) return;
+    if (captureAttempts.current.url !== r.url)
+      captureAttempts.current = { url: r.url, count: 0 };
+    const delay = Math.min(
+      60000 * 2 ** Math.min(captureAttempts.current.count++, 5),
+      1800000,
+    );
+    clearTimeout(captureRetry.current);
+    captureRetry.current = setTimeout(
+      () =>
+        setFailedImages((failed) => failed.filter((value) => value !== source)),
+      delay,
+    );
+  }
   const favicon = r.favicon_url || enriched?.favicon_url;
-  const [failedImage, setFailedImage] = useState<string>();
   const card = useRef<HTMLElement>(null);
   useEffect(() => {
     if (
-      curated ||
       r.preview_image_url?.startsWith("preview:") ||
-      (r.preview_image_url && r.description)
+      r.metadata_status === "ready" ||
+      r.metadata_status === "blocked"
     )
       return;
     const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let visible = false;
+    let fetching = false;
+    let stopped = false;
+    const schedule = (retryAt?: string | null) => {
+      if (!visible || stopped || controller.signal.aborted) return;
+      const delay = Math.max(
+        1000,
+        retryAt ? Date.parse(retryAt) - Date.now() : 60000,
+      );
+      timer = setTimeout(() => void recover(), Math.min(delay, 86400000));
+    };
+    const recover = async () => {
+      if (!visible || fetching || stopped) return;
+      fetching = true;
+      try {
+        const response = await fetch(`/api/resources/${r.id}/metadata`, {
+          method: "POST",
+          signal: controller.signal,
+        });
+        if ([401, 403, 404].includes(response.status)) {
+          stopped = true;
+          return;
+        }
+        if (!response.ok) throw new Error("Metadata recovery unavailable");
+        const data: Resource = await response.json();
+        if (data.url !== r.url || controller.signal.aborted) return;
+        setDetails(data);
+        stopped =
+          data.metadata_status === "blocked" ||
+          data.metadata_status === "ready";
+        schedule(data.metadata_next_retry_at);
+      } catch {
+        schedule(); // A later visit or reconnect can resume the persisted job.
+      } finally {
+        fetching = false;
+      }
+    };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        void fetch("/api/metadata", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: r.url }),
-          signal: controller.signal,
-        })
-          .then(async (response) => {
-            if (response.ok)
-              setDetails({ ...(await response.json()), url: r.url });
-          })
-          .catch(() => {
-            /* Keep the local preview when a website is unavailable. */
-          });
+        visible = entry.isIntersecting;
+        clearTimeout(timer);
+        if (visible) void recover();
       },
       { rootMargin: "200px" },
     );
+    const reconnect = () => {
+      clearTimeout(timer);
+      if (visible) {
+        if (capture)
+          setFailedImages((failed) =>
+            failed.filter((value) => value !== capture),
+          );
+        void recover();
+      }
+    };
     if (card.current) observer.observe(card.current);
+    window.addEventListener("online", reconnect);
     return () => {
+      clearTimeout(timer);
+      window.removeEventListener("online", reconnect);
       observer.disconnect();
       controller.abort();
     };
-  }, [curated, r.url, r.preview_image_url, r.description]);
-  const [faviconBroken, setFaviconBroken] = useState(false);
+  }, [r.id, r.url, r.preview_image_url, r.metadata_status, capture]);
+  const [failedFavicon, setFailedFavicon] = useState<string>();
   const [pending, setPending] = useState(false);
   async function update(values: Partial<Resource>) {
     setPending(true);
@@ -108,9 +192,9 @@ export function ResourceCard({
       >
         {art ? (
           <PreviewArt kind={art} />
-        ) : image && failedImage !== image ? (
+        ) : image ? (
           <div
-            className={`website-capture ${curated?.image ? "is-curated" : ""}`}
+            className={`website-capture ${image === curated?.image || image === capture ? "is-curated" : ""}`}
           >
             <div className="preview-browser" aria-hidden="true">
               <i />
@@ -119,12 +203,23 @@ export function ResourceCard({
               <span>{r.hostname.replace(/^www\./, "")}</span>
             </div>
             <img
+              key={image}
               src={image}
               alt=""
               loading="lazy"
               referrerPolicy="no-referrer"
-              onError={() => setFailedImage(image)}
+              onLoad={() => {
+                setLoadedImage(image);
+                if (image === capture) {
+                  captureAttempts.current.count = 0;
+                  clearTimeout(captureRetry.current);
+                }
+              }}
+              onError={() => imageFailed(image)}
             />
+            {loadedImage !== image ? (
+              <span className="preview-loading">Loading preview…</span>
+            ) : null}
           </div>
         ) : (
           <div className="preview-editorial" aria-hidden="true">
@@ -152,14 +247,14 @@ export function ResourceCard({
       <div className="resource-body">
         <div className="resource-title-row">
           <span className={`site-icon icon-${r.hostname.split(".")[0]}`}>
-            {favicon && !faviconBroken ? (
+            {favicon && failedFavicon !== favicon ? (
               <img
                 src={favicon}
                 alt=""
                 width={18}
                 height={18}
                 referrerPolicy="no-referrer"
-                onError={() => setFaviconBroken(true)}
+                onError={() => setFailedFavicon(favicon)}
               />
             ) : (
               title.slice(0, 1)

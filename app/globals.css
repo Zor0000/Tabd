@@ -2785,3 +2785,17 @@ button svg {
     display: none;
   }
 }
+
+.preview-loading {
+  position: absolute;
+  inset: 22px 0 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: var(--subtle);
+  font-size: 12px;
+  pointer-events: none;
+}
+.website-capture {
+  position: relative;
+}

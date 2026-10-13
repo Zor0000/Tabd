@@ -1,3 +1,5 @@
+import { after } from "next/server";
+import { recoverResourceMetadata } from "@/lib/resource-metadata";
 import {
   actor,
   body,
@@ -63,6 +65,11 @@ export async function POST(request: Request) {
       );
     }
     if (error) throw error;
+    after(() =>
+      recoverResourceMetadata(db, userId, data.id).catch(() => {
+        /* The durable job remains due for recovery. */
+      }),
+    );
     return json(data, 201);
   } catch (e) {
     return failure(e);

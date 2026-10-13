@@ -1,19 +1,7 @@
 import { z } from "zod";
 import { statuses } from "./types";
-export function normalizeUrl(value: string) {
-  const url = new URL(value.trim());
-  if (
-    !["http:", "https:"].includes(url.protocol) ||
-    url.username ||
-    url.password
-  )
-    throw new Error("Use an HTTP or HTTPS URL without credentials.");
-  url.hash = "";
-  for (const key of [...url.searchParams.keys()])
-    if (/^(utm_.+|fbclid|gclid)$/i.test(key)) url.searchParams.delete(key);
-  url.searchParams.sort();
-  return url.toString();
-}
+import { normalizeUrl } from "./url";
+export { normalizeUrl } from "./url";
 const url = z
   .string()
   .trim()
@@ -40,6 +28,14 @@ export const resourceSchema = z.object({
   status: z.enum(statuses).default("To Explore"),
   favicon_url: optionalUrl,
   preview_image_url: optionalUrl,
+  metadata_snapshot: z
+    .object({
+      title: z.string().max(300).optional(),
+      description: z.string().max(2000).optional(),
+      favicon_url: optionalUrl.optional(),
+      preview_image_url: optionalUrl.optional(),
+    })
+    .default({}),
 });
 export const resourcePatch = z.object({
   url: resourceSchema.shape.url.optional(),
@@ -51,6 +47,9 @@ export const resourcePatch = z.object({
   status: resourceSchema.shape.status.removeDefault().optional(),
   favicon_url: resourceSchema.shape.favicon_url.removeDefault().optional(),
   preview_image_url: resourceSchema.shape.preview_image_url
+    .removeDefault()
+    .optional(),
+  metadata_snapshot: resourceSchema.shape.metadata_snapshot
     .removeDefault()
     .optional(),
   is_favorite: z.boolean().optional(),

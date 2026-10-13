@@ -21,6 +21,7 @@ git clone https://github.com/Zor0000/Tabd.git
 cd Tabd
 nvm use
 npm ci
+npx playwright install chromium
 cp .env.example .env.local
 npm run dev
 ```
@@ -105,6 +106,8 @@ tests/               Validation, SSRF, PostgreSQL/RLS and Playwright browser tes
 - URL normalization drops fragments and common tracking parameters, preserves meaningful query parameters and sorts them for stable duplicate detection. HTTP/HTTPS remain distinct.
 - Open tracking is atomic and records only opens through Tabd. Archive is independent from status.
 - Metadata requests allow HTTP/HTTPS on standard ports, reject private and special-use IPs, pin validated DNS results into the connection, validate each redirect, cap redirects, limit page responses to 512 KiB, and time out DNS and network activity. HTML is parsed without executing scripts. Metadata failure never prevents saving the URL.
+- Saved websites receive lazy landing-page captures through `/api/resources/[id]/preview`. The route verifies account ownership before reading the saved URL. Chromium runs in a fresh context; all page and asset requests pass through the same DNS-pinned public-address checks. Downloads, service workers, WebSockets, and non-GET requests are blocked. Captures have bounded time, request, byte, queue, and concurrency limits and a one-hour, 32-image server cache. If capture fails, cards fall back to the site's Open Graph image, then their text preview. Captures are stored permanently in the private `website-previews` Storage bucket under the account owner and bookmark ID, with a URL hash to prevent reuse after a URL edit. Stored captures are reused across server restarts. Apply the durable metadata migration before deployment; existing bookmarks then recover without re-saving.
+- Metadata enrichment runs after an actual save request using Next.js `after`, and incomplete bookmarks resume when visible in the library or when the browser reconnects. Attempts, leases, cooldowns, and last-good metadata live in the owner’s bookmark row. Transient failures retry after 1 minute, 5 minutes, 30 minutes, 6 hours, then daily during app use; `Retry-After` is honored. Successful metadata has no expiry or automatic refresh schedule. There are no cron jobs, external schedulers, or long-running chat tasks. User edits survive enrichment, and URL changes invalidate stale results.
 - Preferences (theme, default view, default collection) are per-browser. Account resources live in Supabase. No sample data is inserted into real accounts.
 
 ## Validation
@@ -142,6 +145,10 @@ GitHub Actions runs linting, both typechecks, unit/database tests, both producti
 
 Deploy the root directory to any Node-compatible Next.js host. Run `npm ci` and `npm run build`; serve with `npm start` or the host's Next.js adapter. Configure the same environment variables in the hosting provider's secret settings before building. Use HTTPS, update Supabase's Site URL and allowed callback, and set `NEXT_PUBLIC_APP_URL` to the production origin. Keep private routes and API responses uncached.
 
+Apply `supabase/migrations/20261013124710_durable_website_metadata.sql` to the intended Tabd project before deploying this update. It adds recovery state, an atomic completion function, and a private screenshot bucket with ownership policies. It preserves existing bookmarks; the initial backfill happens through normal authenticated app usage. No separate scheduler, credentials, or external capture service is required.
+
+Landing-page previews use bundled `@sparticuz/chromium` on Linux, with its binaries included in the preview route's Next.js file trace. Allow at least 1 GB of memory and 60 seconds for that route. On macOS/Windows, run `npx playwright install chromium` on the runtime host. A Linux host with its own Chromium can set `TABD_CHROMIUM_PATH` to the executable's absolute path instead. Captures are of public pages without your browsing session; login walls or sites that refuse automation can fall back to metadata imagery. Preview failures never block saving.
+
 Rebuild the extension with `WXT_APP_URL=https://YOUR_APP_ORIGIN`, load it in Chrome, and allow its resulting ID in the deployed `NEXT_PUBLIC_EXTENSION_IDS` setting. Local unpacked installation is supported; Chrome Web Store publication is not part of this deliverable.
 
 ## Remaining limitations
@@ -149,7 +156,7 @@ Rebuild the extension with `WXT_APP_URL=https://YOUR_APP_ORIGIN`, load it in Chr
 - Live hosted auth, SMTP/OAuth and extension/account acceptance remain unverified until a Supabase project is connected.
 - Browser bookmark HTML import is deferred (lower priority in the brief). JSON export is implemented.
 - Profile display-name editing is implemented; avatar upload is not.
-- Extension saving uses the current tab title/favicon and does not inject content scripts to scrape full-page descriptions. Web saves retrieve metadata.
+- The extension reads the current tab title/favicon without injecting content scripts. Both web and extension saves receive server-side metadata enrichment after saving.
 - The dashboard refetches on window focus; it does not subscribe to realtime events while continuously focused.
 - Large libraries are paginated over the API but rendered locally without list virtualization.
 - An npm audit finding in the ESLint-only development dependency chain (`braces` via Next's lint plugin) currently has no compatible patched version; production dependencies are audited separately. Do not downgrade Next's ESLint configuration across major versions to suppress it.

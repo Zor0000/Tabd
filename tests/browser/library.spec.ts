@@ -28,6 +28,9 @@ test("preview library searches, filters, and remembers list view", async ({
 test("save panel exposes real setup error and keyboard close works", async ({
   page,
 }) => {
+  const metadataResponse = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === "/api/metadata",
+  );
   await page.goto("/preview");
   await page.locator(".topbar-actions .button-primary").click();
   await expect(page.getByRole("dialog")).toBeVisible();
@@ -43,6 +46,7 @@ test("save panel exposes real setup error and keyboard close works", async ({
   await expect(
     page.getByRole("status").filter({ hasText: "preview library" }),
   ).toBeVisible();
+  await metadataResponse;
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
 });
@@ -85,4 +89,75 @@ test("unconfigured API returns an honest setup error", async ({ request }) => {
   });
   expect(response.status()).toBe(503);
   expect((await response.json()).error).toContain("Connect Supabase");
+});
+
+test("saving stays responsive while metadata lookup is pending", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const pending = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/metadata", async (route) => {
+    await pending;
+    await route
+      .fulfill({ json: { warning: "Temporarily unavailable" } })
+      .catch(() => {});
+  });
+  try {
+    await page.goto("/preview");
+    await page
+      .getByRole("button", { name: "Add resource", exact: true })
+      .click();
+    await page
+      .getByRole("textbox", { name: "Website URL Required" })
+      .fill("https://example.com/");
+    await page
+      .getByRole("button", { name: "Save resource", exact: true })
+      .click();
+    await expect(
+      page.getByRole("status").filter({ hasText: "preview library" }),
+    ).toBeVisible();
+  } finally {
+    release();
+  }
+});
+
+test("URL changes replace auto-filled metadata and preserve manual titles", async ({
+  page,
+}) => {
+  const requests: string[] = [];
+  await page.route("**/api/metadata", async (route) => {
+    const url = route.request().postDataJSON().url as string;
+    requests.push(url);
+    const name = new URL(url).hostname;
+    await route.fulfill({
+      json: {
+        title: name,
+        description: `About ${name}`,
+        favicon_url: `${url}icon.png`,
+        preview_image_url: `${url}og.png`,
+      },
+    });
+  });
+  await page.goto("/preview");
+  await page.getByRole("button", { name: "Add resource", exact: true }).click();
+  const url = page.getByRole("textbox", { name: "Website URL Required" });
+  await url.fill("https://first.example/");
+  await page.getByRole("button", { name: "Add details Optional" }).click();
+  const title = page.getByRole("textbox", { name: "Title", exact: true });
+  const description = page.getByRole("textbox", {
+    name: "Description",
+    exact: true,
+  });
+  await expect(title).toHaveValue("first.example");
+  await title.fill("My chosen name");
+  await url.fill("https://second.example/");
+  await description.click();
+  await expect(description).toHaveValue("About second.example");
+  await expect(title).toHaveValue("My chosen name");
+  expect(requests).toEqual([
+    "https://first.example/",
+    "https://second.example/",
+  ]);
 });

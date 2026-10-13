@@ -1,5 +1,6 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { normalizeUrl } from "@/lib/url";
 import { useForm } from "react-hook-form";
 import { Link2, ChevronDown, Loader2, ArrowRight } from "lucide-react";
 import { Sheet } from "./ui/dialog";
@@ -49,14 +50,42 @@ export function SaveResource({
   const [message, setMessage] = useState("");
   const [metadataMessage, setMetadataMessage] = useState("");
   const [duplicate, setDuplicate] = useState<Resource | null>(null);
+  const generated = useRef<Partial<ResourceInput>>(
+    resource?.metadata_snapshot || {},
+  );
+  const metadataSource = useRef(resource?.url || "");
   const metadataRequest = useRef<{
     url: string;
     promise: Promise<void>;
   } | null>(null);
+  const metadataController = useRef<AbortController | null>(null);
+  useEffect(() => () => metadataController.current?.abort(), []);
+  function resetGenerated(url: string) {
+    let changed = metadataSource.current !== url;
+    try {
+      changed = normalizeUrl(metadataSource.current) !== normalizeUrl(url);
+    } catch {
+      /* Empty/new URLs have no prior metadata. */
+    }
+    if (metadataSource.current && changed) {
+      for (const key of [
+        "title",
+        "description",
+        "favicon_url",
+        "preview_image_url",
+      ] as const) {
+        if (getValues(key) === generated.current[key])
+          setValue(key, key.endsWith("_url") ? null : "");
+      }
+      generated.current = {};
+    }
+    metadataSource.current = url;
+  }
   function metadata() {
     const url = getValues("url").trim();
     if (metadataRequest.current?.url === url)
       return metadataRequest.current.promise;
+    if (resource && url === resource.url) return Promise.resolve();
     const promise = fetchMetadata();
     metadataRequest.current = { url: getValues("url").trim(), promise };
     return promise;
@@ -68,6 +97,10 @@ export function SaveResource({
       url = "https://" + url;
       setValue("url", url);
     }
+    resetGenerated(url);
+    metadataController.current?.abort();
+    const controller = new AbortController();
+    metadataController.current = controller;
     setFetching(true);
     setMetadataMessage("");
     try {
@@ -75,9 +108,10 @@ export function SaveResource({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
+        signal: controller.signal,
       });
       const data = await response.json();
-      if (getValues("url").trim() !== url) return;
+      if (controller.signal.aborted || getValues("url").trim() !== url) return;
       if (!response.ok) {
         if (!submitted.current) setMetadataMessage(data.error);
         return;
@@ -90,24 +124,35 @@ export function SaveResource({
           "favicon_url",
           "preview_image_url",
         ] as const) {
-          if (!getValues(key) && data[key]) setValue(key, data[key]);
+          if (!getValues(key) && data[key]) {
+            setValue(key, data[key]);
+            generated.current[key] = data[key];
+          }
         }
       }
     } catch {
+      if (controller.signal.aborted) return;
       setMetadataMessage(
         "Could not retrieve the preview. You can still save the URL.",
       );
     } finally {
-      setFetching(false);
+      if (metadataController.current === controller) {
+        setFetching(false);
+        metadataRequest.current = null;
+      }
     }
   }
   async function submit(input: ResourceInput) {
     submitted.current = true;
     setLoading(true);
     setMessage("");
+    resetGenerated(getValues("url").trim());
     try {
-      if (!resource) await metadata();
-      await onSave({ ...input, ...getValues() }, resource?.id);
+      // Save immediately; the server persists and retries enrichment afterward.
+      await onSave(
+        { ...input, ...getValues(), metadata_snapshot: generated.current },
+        resource?.id,
+      );
       onClose();
     } catch (e) {
       const err = e as Error & { existing?: Resource };

@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       .safeParse(await body(request));
     if (!input.success) throw new ApiError("Enter a valid website URL.");
     try {
-      return json(await metadata(input.data.url));
+      return json(await metadata(input.data.url, request.signal));
     } catch {
       return json({
         warning: "Preview unavailable. You can still save this website.",
