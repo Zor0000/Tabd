@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { browser } from "wxt/browser";
 import "./style.css";
 
-const appUrl = import.meta.env.WXT_APP_URL || "http://localhost:3000";
+import { configuredAppUrl, resolveAppUrl } from "../../lib/app";
 type Collection = { id: string; name: string; parent_id?: string | null };
 type Fields = {
   title: string;
@@ -73,6 +73,7 @@ function collectionLabel(collection: Collection, collections: Collection[]) {
 
 function Popup() {
   const [token, setToken] = useState("");
+  const [appUrl, setAppUrl] = useState(configuredAppUrl);
   const [fields, setFields] = useState<Fields>(emptyFields);
   const [url, setUrl] = useState("");
   const [favicon, setFavicon] = useState<string | null>(null);
@@ -100,7 +101,11 @@ function Popup() {
       setError("");
       try {
         const [stored, [tab]] = await Promise.all([
-          browser.storage.local.get(["tabdToken", "tabdCollection"]),
+          browser.storage.local.get([
+            "tabdToken",
+            "tabdCollection",
+            "tabdAppUrl",
+          ]),
           browser.tabs.query({ active: true, currentWindow: true }),
         ]);
         if (cancelled) return;
@@ -123,7 +128,13 @@ function Popup() {
           typeof stored.tabdToken === "string" ? stored.tabdToken : "";
         setToken(storedToken);
         if (!storedToken) return;
-        const response = await fetch(`${appUrl}/api/collections`, {
+        const resolvedUrl = await resolveAppUrl(
+          stored.tabdAppUrl,
+          controller.signal,
+        );
+        if (cancelled) return;
+        setAppUrl(resolvedUrl);
+        const response = await fetch(`${resolvedUrl}/api/collections`, {
           headers: { Authorization: `Bearer ${storedToken}` },
           signal: AbortSignal.any([
             controller.signal,
@@ -144,6 +155,10 @@ function Popup() {
         if (!Array.isArray(data)) throw new Error("collections");
         if (cancelled) return;
         setCollections(data);
+        // Retain a verified address when the development server changes ports.
+        await browser.storage.local
+          .set({ tabdAppUrl: resolvedUrl })
+          .catch(() => {});
         setFields((current) => ({
           ...current,
           collection_id: data.some((item) => item.id === current.collection_id)
@@ -203,12 +218,17 @@ function Popup() {
     setConnecting(true);
     setError("");
     try {
+      const stored = await browser.storage.local.get("tabdAppUrl");
+      const resolvedUrl = await resolveAppUrl(stored.tabdAppUrl);
+      setAppUrl(resolvedUrl);
       await browser.tabs.create({
-        url: `${appUrl}/connect?extension=${browser.runtime.id}`,
+        url: `${resolvedUrl}/connect?extension=${browser.runtime.id}`,
       });
       window.close();
     } catch {
-      setError("Couldn’t open Tabd. Try connecting again.");
+      setError(
+        "Tabd couldn’t be found. Start the app and open its dashboard in this browser, then try again.",
+      );
     } finally {
       setConnecting(false);
     }
