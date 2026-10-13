@@ -22,6 +22,7 @@ export function ResourceCard({
   onEdit,
   onDelete,
   onOpen,
+  onEnrich,
 }: {
   resource: Resource;
   collection?: Collection;
@@ -29,17 +30,10 @@ export function ResourceCard({
   onEdit: (r: Resource) => void;
   onDelete: (r: Resource) => void;
   onOpen: (r: Resource) => void;
+  onEnrich?: (r: Resource) => void;
 }) {
   const curated = sitePreview(r.url);
-  const [details, setDetails] = useState<{
-    url: string;
-    updated_at?: string;
-    metadata_status?: Resource["metadata_status"];
-    title?: string;
-    description?: string;
-    preview_image_url?: string | null;
-    favicon_url?: string | null;
-  } | null>(null);
+  const [details, setDetails] = useState<Resource | null>(null);
   const enriched =
     details?.url === r.url &&
     (!details.updated_at ||
@@ -132,6 +126,7 @@ export function ResourceCard({
         const data: Resource = await response.json();
         if (data.url !== r.url || controller.signal.aborted) return;
         setDetails(data);
+        onEnrich?.(data);
         stopped =
           data.metadata_status === "blocked" ||
           data.metadata_status === "ready";
@@ -168,7 +163,7 @@ export function ResourceCard({
       observer.disconnect();
       controller.abort();
     };
-  }, [r.id, r.url, r.preview_image_url, r.metadata_status, capture]);
+  }, [r.id, r.url, r.preview_image_url, r.metadata_status, capture, onEnrich]);
   const [failedFavicon, setFailedFavicon] = useState<string>();
   const [pending, setPending] = useState(false);
   async function update(values: Partial<Resource>) {
@@ -324,7 +319,7 @@ export function ResourceCard({
                 align="end"
                 sideOffset={6}
               >
-                <Dropdown.Item onSelect={() => onEdit(r)}>
+                <Dropdown.Item onSelect={() => onEdit(enriched || r)}>
                   <Pencil size={14} />
                   Edit or move
                 </Dropdown.Item>
