@@ -107,6 +107,10 @@ tests/               Validation, SSRF, PostgreSQL/RLS and Playwright browser tes
 - Metadata requests allow HTTP/HTTPS on standard ports, reject private and special-use IPs, pin validated DNS results into the connection, validate each redirect, cap redirects, limit page responses to 512 KiB, and time out DNS and network activity. HTML is parsed without executing scripts. Metadata failure never prevents saving the URL.
 - Preferences (theme, default view, default collection) are per-browser. Account resources live in Supabase. No sample data is inserted into real accounts.
 
+## TypeScript tooling
+
+Dashboard type checks use the pinned TypeScript 7.0.2 native compiler. The `typescript` package name resolves to Microsoft’s `@typescript/typescript6` compatibility package so Next.js and typescript-eslint retain the compiler API they need. The typecheck script calls the native compiler explicitly because npm can resolve the shared `tsc` binary to a transitive TypeScript 6 installation. The extension keeps its independent TypeScript configuration and lockfile.
+
 ## Validation
 
 ```sh
