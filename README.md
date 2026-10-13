@@ -62,7 +62,7 @@ cp .env.example .env
 npm run build
 ```
 
-Set `WXT_APP_URL` in `extension/.env` to the exact dashboard origin, including its port. The default is `http://localhost:3000`. Rebuild after changing it.
+Set `WXT_APP_URL` in `extension/.env` to your dashboard origin. The default is `http://localhost:3000`. For local development, the extension discovers Tabd on `localhost` or `127.0.0.1`, verifies `/api/extension/status`, and remembers the address used for a successful link. If you start Tabd on another port, open its dashboard in the same browser; no extension rebuild is needed for that port change. Hosted builds allow only the configured origin and must be rebuilt after changing its domain.
 
 1. Open `chrome://extensions` and enable Developer mode.
 2. Click **Load unpacked** and choose `extension/.output/chrome-mv3`.
@@ -72,7 +72,13 @@ Set `WXT_APP_URL` in `extension/.env` to the exact dashboard origin, including i
 6. Open a normal HTTP/HTTPS website. Click the extension, select a collection if wanted, and save. Status, tags, and notes are optional.
 7. Switch back to the dashboard; it refreshes on window focus. The new resource appears in the same account.
 
-The extension needs only `activeTab`, `storage`, and host access to the configured dashboard origin. It does not request browsing history or access to every website. Chrome internal pages cannot be saved. It reads the active tab's URL, title and favicon. The web save form additionally extracts description and Open Graph preview metadata.
+The extension needs only `activeTab`, `storage`, and host access to the configured dashboard origin. Local development builds allow HTTP on `localhost` and `127.0.0.1` across ports; hosted builds stay on the configured origin. It does not request browsing history or access to every website. Chrome internal pages cannot be saved. It reads the active tab's URL, title and favicon. The web save form additionally extracts description and Open Graph preview metadata.
+
+The popup follows your system's light or dark appearance. It remembers the last saved collection and shows nested collections with their full path. Title, status, tags, and notes stay behind **Add details**, with the save action always visible. Saving an existing page loads its current details; **Save changes** updates only fields you edit, preserving existing notes and tags. Connection failures can be retried, and expired access prompts you to reconnect.
+
+After rebuilding, click **Reload** on Tabd in `chrome://extensions` to use the updated popup.
+
+If connecting reports that the extension cannot be reached, reload the installed extension and refresh the connection page. The app and extension must be in the same browser profile. A missing messaging API can indicate a stale page, disabled extension, a different profile, or an unsupported browser; it does not mean you need to reinstall. The app pings the extension before issuing an account token and reports connection failures with recovery steps. If the extension cannot find Tabd, start the server and open its dashboard before trying again; unrelated apps on familiar ports are ignored.
 
 ### Linking security
 
@@ -116,6 +122,8 @@ npm run test:extension
 ```
 
 The browser tests start their own preview server on port 3210 with backend credentials disabled. They refuse to reuse an existing server. If the port is occupied, run `TABD_TEST_PORT=3211 npm run test:e2e`. `npm test` includes PGlite schema tests that create two users and verify RLS isolation, ownership integrity, hierarchy constraints, deletion semantics, duplicate constraints, full-text search and atomic open tracking.
+
+`npm run test:extension` loads a local-development build in Chromium and exercises saving, duplicate preservation, retries, expired access, restricted pages, keyboard disclosure, and validation with controlled API responses. A second suite uses real webpage-to-extension messaging and isolated HTTP servers to verify ping/link replies, token verification, port changes without rebuilding, saving to the discovered server, and rejection of unrelated sites. To capture popup states, run `TABD_EXTENSION_SCREENSHOTS=artifacts/extension npm run test:extension`. These checks do not replace the hosted account acceptance below.
 
 GitHub Actions runs linting, both typechecks, unit/database tests, both production builds, desktop/mobile browser tests, and the extension smoke test on pushes to `main` and pull requests. CI needs no production credentials. Dependabot checks dashboard, extension, and GitHub Actions dependencies monthly.
 

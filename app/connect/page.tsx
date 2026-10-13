@@ -1,30 +1,17 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-declare global {
-  interface Window {
-    chrome?: {
-      runtime?: {
-        sendMessage: (
-          id: string,
-          message: unknown,
-          callback: (
-            reply: { ok?: boolean; error?: string } | undefined,
-          ) => void,
-        ) => void;
-        lastError?: { message?: string };
-      };
-    };
-  }
-}
+import { probeExtension, sendExtensionMessage } from "@/lib/extension-link";
 export default function Connect() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const connecting = useRef(false);
   async function link() {
+    if (connecting.current) return;
     const id = new URLSearchParams(location.search).get("extension") || "";
     const allowed = (process.env.NEXT_PUBLIC_EXTENSION_IDS || "")
       .split(",")
@@ -35,16 +22,16 @@ export default function Connect() {
       );
       return;
     }
-    if (!window.chrome?.runtime?.sendMessage) {
-      setError(
-        "Install the extension in Chrome, then reopen this page from its popup.",
-      );
-      return;
-    }
+    connecting.current = true;
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/extension-token", { method: "POST" });
+      // Wake and verify the receiver before issuing an account credential.
+      await probeExtension(id);
+      const response = await fetch("/api/extension-token", {
+        method: "POST",
+        signal: AbortSignal.timeout(15000),
+      });
       const result = await response.json();
       if (response.status === 401) {
         router.push(
@@ -53,21 +40,23 @@ export default function Connect() {
         return;
       }
       if (!response.ok) throw new Error(result.error);
-      window.chrome.runtime.sendMessage(
-        id,
-        { type: "TABD_LINK", token: result.token },
-        (reply) => {
-          setBusy(false);
-          if (window.chrome?.runtime?.lastError || !reply?.ok)
-            setError(
-              reply?.error ||
-                "Could not reach the extension. Check its configured app URL.",
-            );
-          else setDone(true);
-        },
-      );
+      await sendExtensionMessage(id, {
+        type: "TABD_LINK",
+        token: result.token,
+      });
+      setDone(true);
     } catch (e) {
-      setError((e as Error).message);
+      setError(
+        e instanceof DOMException ||
+          e instanceof TypeError ||
+          e instanceof SyntaxError
+          ? "Couldn’t reach the Tabd app. Check that it is running, then try again."
+          : e instanceof Error
+            ? e.message
+            : "Could not connect. Please try again.",
+      );
+    } finally {
+      connecting.current = false;
       setBusy(false);
     }
   }

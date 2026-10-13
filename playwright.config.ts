@@ -14,7 +14,7 @@ export default defineConfig({
       SUPABASE_SECRET_KEY: "",
       NEXT_PUBLIC_APP_URL: baseURL,
       NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: "false",
-      NEXT_PUBLIC_EXTENSION_IDS: "",
+      NEXT_PUBLIC_EXTENSION_IDS: "abcdefghijklmnopabcdefghijklmnop",
       NEXT_TELEMETRY_DISABLED: "1",
     },
     timeout: 120000,
