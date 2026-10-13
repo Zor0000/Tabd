@@ -4,6 +4,13 @@ import ts from "eslint-config-next/typescript";
 export default defineConfig([
   ...next,
   ...ts,
-  globalIgnores([".next/**", "extension/.output/**", "extension/.wxt/**"]),
+  globalIgnores([
+    ".next/**",
+    "extension/.output/**",
+    "extension/.wxt/**",
+    "test-results/**",
+    "playwright-report/**",
+    ".impeccable/review/**",
+  ]),
   { rules: { "@next/next/no-img-element": "off" } },
 ]);

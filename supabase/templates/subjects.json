@@ -1,0 +1,8 @@
+{
+  "confirmation": "Confirm your email for Tabd",
+  "recovery": "Reset your Tabd password",
+  "email_change": "Confirm your email change for Tabd",
+  "password_changed_notification": "Your Tabd password was changed",
+  "email_changed_notification": "Your Tabd email address was changed",
+  "reauthentication": "Your Tabd verification code"
+}

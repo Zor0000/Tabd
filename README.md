@@ -47,7 +47,7 @@ NEXT_PUBLIC_EXTENSION_IDS=
 
 The initial migration is **`supabase/migrations/20261011091851_initial_library.sql`**; **`supabase/migrations/20261011140406_index_collection_parent.sql`** adds the collection parent index. Use `npx supabase login`, `npx supabase link --project-ref YOUR_PROJECT_REF`, and `npx supabase db push` to apply all migrations using the CLI. Inspect the linked project before pushing.
 
-The publishable key is safe in the browser because tables enforce RLS. The secret key (or legacy service-role key) is **server-only**, used exclusively to validate extension tokens and operate on the validated owner's rows. Never add it to the extension, `NEXT_PUBLIC_*`, or source control. Web dashboard operations use the user's session and RLS, not the secret key.
+The publishable key is safe in the browser because tables enforce RLS. The secret key (or legacy service-role key) is **server-only**, used to validate extension and MCP tokens and operate on the validated owner's rows. MCP operations are read-only. Never add the secret key to the extension, `NEXT_PUBLIC_*`, or source control. Web dashboard operations use the user's session and RLS, not the secret key.
 
 4. In Authentication → URL Configuration, set the Site URL to your application origin and add `http://localhost:3000/auth/callback` to allowed redirects (substitute your actual port). Add your production callback before deployment.
 5. Email authentication is enabled in Supabase by default. Decide whether email confirmation is required; for production configure SMTP. The app clearly asks unconfirmed users to check email.
@@ -86,6 +86,12 @@ If connecting reports that the extension cannot be reached, reload the installed
 A signed-in web session creates a 256-bit random, account-scoped token, with a 30-day lifetime. Only its SHA-256 hash is stored in PostgreSQL. The web app sends the token directly to an explicitly allowed extension ID using Chrome external messaging. The extension checks the sender's origin, verifies the token against the API, then stores it in extension-local storage. Credentials never travel through a URL or accessible browser cookie. Every extension request resolves the token owner server-side, verifies collection ownership, and scopes all reads/writes to that owner. Revocation is available in Settings. Disconnecting in the popup removes the local token; use **Revoke extension access** to invalidate all issued tokens. Web sign-out alone does not revoke extension links.
 
 ## Architecture
+
+### Personal-library MCP
+
+Connect coding agents from **Settings → Connect coding agents** (`/agents`). Tabd exposes five read-only tools for library search, references, collections, explicit taste preferences, and design context at `/api/mcp`. Agent tokens are separate from extension tokens, expire after 30 days, and can be revoked individually.
+
+Apply the `20261012121313_personal_library_mcp.sql` migration before using this feature. See [MCP setup, tool behavior, and verification](docs/mcp.md) for connection instructions and current limits. This release uses keyword search, user-written preferences, and existing preview metadata; component capture and semantic search are future work.
 
 ```text
 app/                 Next.js pages, auth callback and Route Handlers
