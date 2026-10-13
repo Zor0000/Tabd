@@ -50,3 +50,9 @@ These gates support a direct launch; no beta phase is required. Domain activatio
 ## Branch context
 
 Latest merged PRs reviewed: #7 library search, #6 durable website metadata/previews, #5 extension discovery/branding, and dependency updates #1/#2. This branch starts at current main and includes the two existing personal-library MCP commits, which were not yet on main. The original checkout's uncommitted work was preserved.
+
+## Dependency alert observed during PR creation
+
+GitHub Dependabot alert #1 is open for `braces` 3.0.3: stack-exhaustion denial of service from deeply nested patterns. The installed path is development tooling (`eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces`). GitHub reports no patched version. Review exposure and upstream remediation as part of the production-readiness gate; this finding does not establish a reachable web/MCP runtime vulnerability.
+
+Final local validation: 92 unit tests, 36 desktop/mobile browser tests, typecheck, lint, and production build passed. These do not replace the pending real-inbox and deployed-release checks.
