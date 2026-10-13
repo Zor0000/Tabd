@@ -1,4 +1,5 @@
 "use client";
+import { AccountAccess } from "@/components/account-access";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -18,7 +19,6 @@ import {
   Inbox,
   Layers,
   List,
-  LogOut,
   Menu,
   MoreHorizontal,
   Plus,
@@ -1042,20 +1042,7 @@ export function Dashboard({
               >
                 Revoke extension access
               </Button>
-              <Button
-                variant="ghost"
-                onClick={async () => {
-                  const { error } = await browserClient().auth.signOut();
-                  if (error) notify(error.message);
-                  else {
-                    router.push("/login");
-                    router.refresh();
-                  }
-                }}
-              >
-                <LogOut size={16} />
-                Sign out
-              </Button>
+              <AccountAccess />
             </>
           )}
           {preview && (

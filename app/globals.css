@@ -2987,3 +2987,22 @@ button svg {
     flex-direction: column;
   }
 }
+
+/* Auth recovery and account security share the existing silver/orange surface. */
+.auth-form-spaced { margin-top: 28px; }
+.auth-field { display: grid; gap: 8px; }
+.auth-password { position: relative; }
+.auth-password input { width: 100%; padding-inline-end: 48px; }
+.auth-password button { position: absolute; inset-inline-end: 2px; top: 2px; width: 42px; height: 41px; display: grid; place-items: center; color: #686b70; border-radius: 4px; }
+.auth-password button:hover { background: #f5f6f8; color: #25262c; }
+.auth-text-link { color: #b73908; font-size: 13px; text-align: start; text-decoration: underline; text-underline-offset: 3px; }
+.auth-text-link:hover { color: #812904; }
+.auth-align-end { justify-self: end; margin-top: -8px; }
+.auth-secondary-link { display: block; margin: 20px 0; }
+.auth-hint { font-size: 12px; line-height: 1.6; color: var(--muted); margin: 0; }
+.auth-account .auth-hint { color: #686b70; }
+.auth-feedback { margin: 0; overflow-wrap: anywhere; }
+.auth-feedback-error { color: #a43232; }
+.auth-account input { font-size: 16px; }
+.auth-account button:focus-visible, .auth-account a:focus-visible { outline: 2px solid #b73908; outline-offset: 4px; }
+.auth-mode button:disabled, .auth-text-link:disabled { cursor: wait; }
