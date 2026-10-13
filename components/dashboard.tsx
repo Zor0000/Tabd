@@ -62,16 +62,10 @@ async function api<T>(
     );
   return data;
 }
-async function loadResources(
-  query = "",
-  signal?: AbortSignal,
-): Promise<Resource[]> {
+async function loadResources(): Promise<Resource[]> {
   const all: Resource[] = [];
   for (let page = 0; ; page++) {
-    const response = await fetch(
-      `/api/resources?page=${page}&q=${encodeURIComponent(query)}`,
-      { signal },
-    );
+    const response = await fetch(`/api/resources?page=${page}`);
     const data = await response.json();
     if (!response.ok)
       throw new Error(data.error || "Your library could not load.");
@@ -101,10 +95,6 @@ export function Dashboard({
   const [scope, setScope] = useState<Scope>("all");
   const [status, setStatus] = useState<Status | "All">("All");
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<{
-    query: string;
-    resources: Resource[];
-  } | null>(null);
   const [profileName, setProfileName] = useState(displayName || "");
   const [profileBusy, setProfileBusy] = useState(false);
   const [sort, setSort] = useState("newest");
@@ -163,13 +153,6 @@ export function Dashboard({
       );
     };
     setResources(replace);
-    setSearchResults((previous) => {
-      if (!previous) return previous;
-      const updated = replace(previous.resources);
-      return updated === previous.resources
-        ? previous
-        : { ...previous, resources: updated };
-    });
   }, []);
   useEffect(() => {
     // Initial fetch synchronizes the component with the external account database.
@@ -202,21 +185,6 @@ export function Dashboard({
     };
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    if (preview || !query.trim()) return;
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      loadResources(query.trim(), controller.signal)
-        .then((resources) => setSearchResults({ query, resources }))
-        .catch((error) => {
-          if (error.name !== "AbortError") notify(error.message);
-        });
-    }, 180);
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [query, preview, notify]);
   const changeView = (value: string) => {
     setView(value);
     localStorage.setItem("tabd-view", value);
@@ -258,7 +226,6 @@ export function Dashboard({
       setResources((previous) =>
         previous.map((r) => (r.id === id ? saved : r)),
       );
-      setSearchResults(null);
       notify("Resource updated");
     } catch (e) {
       notify((e as Error).message);
@@ -311,9 +278,9 @@ export function Dashboard({
   };
   const filtered = useMemo(() => {
     const text = query.toLowerCase().trim();
-    const fromServer =
-      !preview && searchResults?.query === query && Boolean(query.trim());
-    return (fromServer ? searchResults!.resources : resources)
+    // The complete, paginated library uses the same matching rule while typing
+    // and after typing stops; a stricter server search must not replace it.
+    return resources
       .filter((r) => {
         if (scope === "archived" ? !r.is_archived : r.is_archived) return false;
         if (scope === "inbox" && r.collection_id) return false;
@@ -341,7 +308,6 @@ export function Dashboard({
           return false;
         return (
           !text ||
-          fromServer ||
           [r.title, r.description, r.hostname, r.personal_note, ...r.tags]
             .join(" ")
             .toLowerCase()
@@ -358,17 +324,7 @@ export function Dashboard({
                 Date.parse(a.last_opened_at || "1970-01-01")
               : Date.parse(b.created_at) - Date.parse(a.created_at),
       );
-  }, [
-    resources,
-    scope,
-    status,
-    query,
-    date,
-    sort,
-    now,
-    preview,
-    searchResults,
-  ]);
+  }, [resources, scope, status, query, date, sort, now]);
   const revisit = active.find(
     (r) =>
       r.status === "To Explore" &&
