@@ -10,7 +10,8 @@ const manifest = JSON.parse(
 );
 assert.equal(manifest.manifest_version, 3);
 assert.deepEqual(manifest.permissions.sort(), ["activeTab", "storage"]);
-const appUrl = new URL(manifest.host_permissions[0]).origin;
+const appUrl = "http://localhost:38491";
+assert.ok(manifest.host_permissions.includes("http://localhost/*"));
 const profile = await mkdtemp(path.join(tmpdir(), "tabd-extension-test-"));
 const screenshots = process.env.TABD_EXTENSION_SCREENSHOTS;
 if (screenshots) await mkdir(screenshots, { recursive: true });
@@ -50,6 +51,10 @@ try {
   const id = new URL(worker.url()).host;
   await context.route(`${appUrl}/api/**`, async (route) => {
     const request = route.request();
+    if (request.url().endsWith("/extension/status")) {
+      await route.fulfill({ json: { app: "tabd", extensionLinkVersion: 1 } });
+      return;
+    }
     if (request.url().endsWith("/collections")) {
       await route.fulfill({
         status: failCollections ? 503 : mode === "expired-load" ? 401 : 200,
@@ -83,6 +88,9 @@ try {
     await worker.evaluate(
       async ({ connected, remembered }) => {
         await chrome.storage.local.clear();
+        await chrome.storage.local.set({
+          tabdAppUrl: "http://localhost:38491",
+        });
         if (connected)
           await chrome.storage.local.set({
             tabdToken: "test-token",
