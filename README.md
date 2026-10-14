@@ -129,16 +129,17 @@ npm run typecheck
 npm run lint
 npm test
 npm run build
-npx playwright install chromium
+npx playwright install chromium webkit
 npm run test:e2e
+npm run test:responsive
 npm run build --prefix extension
 npm run typecheck --prefix extension
 npm run test:extension
 ```
 
-The browser tests start their own preview server on port 3210 with backend credentials disabled. They refuse to reuse an existing server. If the port is occupied, run `TABD_TEST_PORT=3211 npm run test:e2e`. `npm test` includes PGlite schema tests that create two users and verify RLS isolation, ownership integrity, hierarchy constraints, deletion semantics, duplicate constraints, full-text search and atomic open tracking.
+The browser tests start their own preview server on port 3210 with backend credentials disabled and isolated output in `.next-test`, so the normal development server can remain running. They refuse to reuse an existing server. If the port is occupied, run `TABD_TEST_PORT=3211 npm run test:e2e`. `npm run test:responsive` checks a 320px phone, iPhone WebKit, portrait and landscape iPad WebKit, a short landscape phone, and desktop. It covers touch targets, navigation focus and scrolling, filters, list actions, editing, save forms, landing navigation, and account entry. These are browser emulations, not physical-device tests. `npm test` includes PGlite schema tests that create two users and verify RLS isolation, ownership integrity, hierarchy constraints, deletion semantics, duplicate constraints, full-text search and atomic open tracking.
 
-`npm run test:extension` loads a local-development build in Chromium and exercises saving, duplicate preservation, retries, expired access, restricted pages, keyboard disclosure, and validation with controlled API responses. A second suite uses real webpage-to-extension messaging and isolated HTTP servers to verify ping/link replies, token verification, port changes without rebuilding, saving to the discovered server, and rejection of unrelated sites. To capture popup states, run `TABD_EXTENSION_SCREENSHOTS=artifacts/extension npm run test:extension`. These checks do not replace the hosted account acceptance below.
+`npm run test:extension` loads a local-development build in Chromium and exercises saving, duplicate preservation, retries, expired access, restricted pages, keyboard disclosure, and validation with controlled API responses. It also uses synthesized touch input in narrow and short windows to verify that details scroll and Save remains reachable. A second suite uses real webpage-to-extension messaging and isolated HTTP servers to verify ping/link replies, token verification, port changes without rebuilding, saving to the discovered server, and rejection of unrelated sites. To capture popup states, run `TABD_EXTENSION_SCREENSHOTS=artifacts/extension npm run test:extension`. These checks do not replace the hosted account acceptance below.
 
 GitHub Actions runs linting, both typechecks, unit/database tests, both production builds, desktop/mobile browser tests, and the extension smoke test on pushes to `main` and pull requests. CI needs no production credentials. Dependabot checks dashboard, extension, and GitHub Actions dependencies monthly.
 

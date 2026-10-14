@@ -9,6 +9,7 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: false,
     env: {
+      TABD_TEST_DIST_DIR: ".next-test",
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "",
       SUPABASE_SECRET_KEY: "",

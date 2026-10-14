@@ -49,9 +49,11 @@ jobs:
         run: npm run build --prefix extension
       - name: Check extension types
         run: npm run typecheck --prefix extension
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
       - name: Run desktop and mobile browser tests
         run: npm run test:e2e
+      - name: Run phone and iPad responsive browser tests
+        run: npm run test:responsive
       - name: Run extension smoke test
         run: npm run test:extension

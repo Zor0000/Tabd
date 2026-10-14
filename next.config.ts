@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
+  // Keep browser tests isolated from an already-running local workspace.
+  distDir: process.env.TABD_TEST_DIST_DIR || ".next",
   devIndicators: false,
   serverExternalPackages: [
     "playwright",

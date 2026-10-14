@@ -322,6 +322,68 @@ try {
   await page.close();
 
   assert.deepEqual(errors, []);
+  // Use Chrome's actual extension runtime at narrow and short touch viewports.
+  for (const viewport of [
+    { width: 320, height: 480 },
+    { width: 360, height: 300 },
+  ]) {
+    page = await open();
+    await page.setViewportSize(viewport);
+    const touch = await context.newCDPSession(page);
+    await touch.send("Emulation.setTouchEmulationEnabled", {
+      enabled: true,
+      maxTouchPoints: 1,
+    });
+    async function tap(control) {
+      await control.scrollIntoViewIfNeeded();
+      const bounds = await control.boundingBox();
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [
+          { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 },
+        ],
+      });
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchEnd",
+        touchPoints: [],
+      });
+    }
+    await tap(page.getByRole("button", { name: "Add details" }));
+    await expect(
+      page.getByRole("button", { name: "Hide details" }),
+    ).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByLabel("Personal note")).toBeAttached();
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    assert.ok(
+      (await page.locator("main").boundingBox()).height <= viewport.height,
+    );
+    assert.equal(
+      await page.evaluate(() => matchMedia("(pointer: coarse)").matches),
+      true,
+    );
+    assert.ok(
+      await page
+        .getByLabel("Title", { exact: true })
+        .evaluate((node) => parseFloat(getComputedStyle(node).fontSize) >= 16),
+    );
+    await page
+      .getByLabel("Personal note")
+      .fill("A useful find from a small window.");
+    await expect(
+      page.getByRole("button", { name: "Save page", exact: true }),
+    ).toBeInViewport();
+    await capture(page, `touch-${viewport.width}-${viewport.height}`);
+    await tap(page.getByRole("button", { name: "Save page", exact: true }));
+    await expect(
+      page.getByRole("heading", { name: "A good find, kept." }),
+    ).toBeVisible();
+    await page.close();
+  }
+  assert.deepEqual(errors, []);
   console.log(
     "Extension tests passed: MV3 permissions, account-link entry, save, pending state, collection memory, duplicate preservation, retry, expiry, restricted tabs, long content, keyboard disclosure, validation, light/dark layouts. API responses are controlled fixtures; hosted account acceptance is separate.",
   );

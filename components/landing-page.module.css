@@ -214,6 +214,11 @@
   margin-top: 26px;
   font-size: 16px;
 }
+.extensionCopy > .deviceNote {
+  font-size: 14px;
+  margin-top: 16px;
+  color: #50545a;
+}
 .saveSteps {
   list-style: none;
   counter-reset: save-step;
@@ -601,4 +606,21 @@
     order: 3;
     width: 100%;
   }
+}
+
+@media (max-width: 360px) {
+  .header { flex-wrap: wrap; gap: 12px; }
+  .header nav { width: 100%; justify-content: space-between; gap: 8px; }
+}
+
+@media (max-width: 900px) and (max-height: 600px) {
+  .hero { height: auto; min-height: 560px; }
+}
+
+@media (pointer: coarse) {
+  .header { padding-top: max(18px, env(safe-area-inset-top)); }
+  .intro p,
+  .sectionHeading p,
+  .cta p { font-size: 16px; }
+  .footer { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
 }

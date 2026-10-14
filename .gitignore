@@ -3,6 +3,7 @@ node_modules/
 
 # Builds and generated types
 .next/
+.next-test/
 out/
 dist/
 build/

@@ -6,6 +6,7 @@ export default defineConfig([
   ...ts,
   globalIgnores([
     ".next/**",
+    ".next-test/**",
     "extension/.output/**",
     "extension/.wxt/**",
     "test-results/**",
