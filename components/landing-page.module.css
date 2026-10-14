@@ -141,6 +141,7 @@
   min-height: 44px;
 }
 .intro,
+.extension,
 .library,
 .organize,
 .cta,
@@ -177,6 +178,7 @@
   text-wrap: balance;
 }
 .intro p,
+.extensionCopy > p,
 .sectionHeading p,
 .organizeCopy > p,
 .cta p {
@@ -198,6 +200,160 @@
 .textLink:hover {
   text-decoration: underline;
   text-underline-offset: 5px;
+}
+.extension {
+  display: grid;
+  grid-template-columns: 0.9fr 1.15fr;
+  align-items: center;
+  gap: 7%;
+  padding-block: 100px;
+  background: #f3f0e9;
+  scroll-margin-top: 24px;
+}
+.extensionCopy > p {
+  margin-top: 26px;
+  font-size: 16px;
+}
+.saveSteps {
+  list-style: none;
+  counter-reset: save-step;
+  padding: 0;
+  margin: 32px 0 0;
+}
+.saveSteps li {
+  position: relative;
+  counter-increment: save-step;
+  padding: 0 0 22px 34px;
+  display: grid;
+  gap: 5px;
+}
+.saveSteps li:last-child {
+  padding-bottom: 0;
+}
+.saveSteps li::before {
+  content: counter(save-step);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  color: #b73908;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.saveSteps strong {
+  font-size: 14px;
+  font-weight: 550;
+}
+.saveSteps span {
+  color: #686b70;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.browserFrame {
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 22px 55px #332d2417;
+}
+.browserTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 15px;
+  background: #e5e6e5;
+}
+.browserTab > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a2a5a7;
+}
+.browserTab > div {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  align-self: end;
+  margin-left: 14px;
+  padding: 9px 16px 7px;
+  border-radius: 8px 8px 0 0;
+  background: #fff;
+  font-size: 10px;
+}
+.browserToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  color: #686b70;
+  border-bottom: 1px solid #e9eaee;
+}
+.browserToolbar > svg {
+  flex: none;
+}
+.browserAddress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  background: #f1f2f2;
+  border-radius: 16px;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.toolbarTabd {
+  padding: 4px 7px;
+  background: #fff0e8;
+  border-radius: 5px;
+  color: #25262c;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+.toolbarTabd span {
+  color: #ff5517;
+}
+.browserCanvas {
+  position: relative;
+  min-height: 470px;
+  padding: 0 18px 36px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  background: #fcfcfa;
+}
+.exampleArticle {
+  position: absolute;
+  top: 52px;
+  left: 32px;
+  width: 60%;
+  color: #787b77;
+}
+.exampleArticle > span {
+  font-size: 10px;
+}
+.exampleArticle p {
+  max-width: 11ch;
+  margin: 20px 0 28px;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.exampleArticle > div {
+  height: 5px;
+  background: #e5e6e1;
+  margin-top: 12px;
+}
+.exampleArticle > div:last-child {
+  width: 65%;
+}
+.landing figure .extensionPopup {
+  position: relative;
+  width: min(100%, 320px);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 14px 36px #25262c24;
 }
 .library {
   padding-top: 85px;
@@ -332,6 +488,16 @@
     padding-block: 90px;
     gap: 44px;
   }
+  .extension {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    padding-block: 90px;
+  }
+  .extensionPreview {
+    max-width: 620px;
+    width: 100%;
+    justify-self: center;
+  }
   .organizeCopy > p {
     max-width: 55ch;
   }
@@ -344,7 +510,7 @@
     padding: 18px 6%;
   }
   .header nav {
-    gap: 22px;
+    gap: 16px;
     font-size: 12px;
   }
   .brand {
@@ -367,6 +533,7 @@
     font-size: clamp(24px, 6.3vw, 36px);
   }
   .intro,
+  .extension,
   .library,
   .organize,
   .cta,
@@ -400,6 +567,28 @@
   }
   .organize {
     padding-block: 72px;
+  }
+  .extension {
+    padding-block: 72px;
+  }
+  .browserToolbar {
+    gap: 8px;
+    padding-inline: 10px;
+  }
+  .browserToolbar > svg:nth-child(2),
+  .browserToolbar > svg:last-child {
+    display: none;
+  }
+  .browserCanvas {
+    min-height: 0;
+    padding-inline: 16px;
+    padding-bottom: 28px;
+  }
+  .landing figure .extensionPopup {
+    width: 100%;
+  }
+  .exampleArticle {
+    display: none;
   }
   .cta {
     padding-block: 76px;
