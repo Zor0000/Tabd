@@ -4,6 +4,8 @@ import base from "./playwright.config";
 export default defineConfig({
   ...base,
   testMatch: "responsive.spec.ts",
+  // Full touch flows and screenshots take longer on shared Linux CI runners.
+  timeout: 60_000,
   workers: 3,
   projects: [
     {
