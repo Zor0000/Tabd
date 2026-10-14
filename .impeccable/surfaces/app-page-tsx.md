@@ -2,7 +2,7 @@
 version: 1
 slug: "app-page-tsx"
 primary_target: "app/page.tsx"
-related_targets: ["components/landing-page.tsx", "components/landing-page.module.css", "components/auth-wordmark.tsx", "public/landing/library.png", "public/landing/collection.png"]
+related_targets: ["components/landing-page.tsx", "components/landing-page.module.css", "components/auth-wordmark.tsx", "public/landing/library.png", "public/landing/collection.png", "public/landing/extension-save.png"]
 ---
 
 # Tabd public landing page
@@ -36,3 +36,11 @@ The coordinating agent reports successful production build, TypeScript check and
 ## Landing refinements
 
 The hero now uses “Save the sites you love. Find them when it matters.” as its sole heading, with soft copper-orange engraved lettering and a pointer-following warm reflection. The reflection is decorative, hidden from assistive technology, and disabled for reduced motion and non-hover devices. The introduction includes `public/landing/tab-clutter.svg`: authored Chrome-style window geometry with embedded site favicons, pinned tabs, tab groups, selected tabs, toolbar controls, realistic URLs and bookmarks. It is an illustrative composite, not an actual browser screenshot. Desktop and mobile renders were inspected with no horizontal overflow.
+
+## Extension showcase
+
+The dedicated `#extension` section follows the tab-clutter introduction and precedes the library. “Keep the find. Close the tab.” introduces the primary saving mechanism in a warm neutral two-column layout that stacks on mobile. Three steps explain opening Tabd with the current page filled in, choosing a collection or Inbox, and saving with optional tags and a note. The top navigation includes “Extension”; the introduction links here and the section links onward to the library.
+
+`public/landing/extension-save.png` is an actual built Chrome MV3 popup capture from `tests/extension-smoke.mjs` (720 × 920, DPR 2), placed within an illustrative browser frame. The account, API responses and `example.com/design` page are test fixtures; Inbox is selected. Embedded provenance records the origin. The caption reads “Tabd Chrome extension · Example save, actual interface.” The reported landing-asset scan found three rasters and no missing provenance.
+
+The coordinating agent reports passing TypeScript, targeted ESLint, production build, extension build and extension smoke checks. Browser checks at widths 1440 and 390 confirmed the anchor and loaded image with no overflow or errors. Independent review disposition: Ship, no material findings; desktop, mobile and detail screenshots are retained in `.impeccable/review/`. This is a static showcase; it adds no extension functionality and does not verify hosted account acceptance.

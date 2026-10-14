@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, EllipsisVertical, Puzzle, RotateCw, SlidersHorizontal } from "lucide-react";
 import { AuthWordmark } from "@/components/auth-wordmark";
 import { LandingHeadline } from "@/components/landing-headline";
 import styles from "./landing-page.module.css";
@@ -21,6 +21,7 @@ export function LandingPage() {
           </Link>
           <nav aria-label="Main navigation">
             <a href="#benefits">Discover Tabd</a>
+            <a href="#extension">Extension</a>
             <Link href="/login">
               Sign in <ArrowUpRight size={15} />
             </Link>
@@ -50,8 +51,8 @@ export function LandingPage() {
             bit of design inspiration. Give your useful corner of the internet a
             place of its own.
           </p>
-          <a className={styles.textLink} href="#library">
-            Meet your personal web library <ArrowDown size={17} />
+          <a className={styles.textLink} href="#extension">
+            Save it with the extension <ArrowDown size={17} />
           </a>
         </div>
         <figure className={styles.tabClutter}>
@@ -62,6 +63,75 @@ export function LandingPage() {
             height={340}
             sizes="(max-width: 600px) 88vw, 86vw"
           />
+        </figure>
+      </section>
+
+      <section
+        className={styles.extension}
+        id="extension"
+        aria-labelledby="extension-title"
+      >
+        <div className={styles.extensionCopy}>
+          <h2 id="extension-title">
+            Keep the find.
+            <br />
+            Close the tab.
+          </h2>
+          <p>
+            Save the page you’re on with the Tabd Chrome extension. Your next
+            good find goes straight to your library, without breaking your flow.
+          </p>
+          <ol className={styles.saveSteps}>
+            <li>
+              <strong>Open Tabd in your toolbar</strong>
+              <span>The current page is already filled in.</span>
+            </li>
+            <li>
+              <strong>Pick a place, or organize later</strong>
+              <span>Choose a collection or keep it in your Inbox.</span>
+            </li>
+            <li>
+              <strong>Save it for when you need it</strong>
+              <span>Add tags and a note if you have more to remember.</span>
+            </li>
+          </ol>
+          <a className={styles.textLink} href="#library">
+            See where your saves land <ArrowDown size={17} />
+          </a>
+        </div>
+        <figure className={styles.extensionPreview}>
+          <div className={styles.browserFrame}>
+            <div className={styles.browserTab} aria-hidden="true">
+              <span /><span /><span />
+              <div>A small collection of useful things</div>
+            </div>
+            <div className={styles.browserToolbar} aria-hidden="true">
+              <ArrowLeft size={15} />
+              <RotateCw size={14} />
+              <div className={styles.browserAddress}>
+                <SlidersHorizontal size={13} /> example.com/design
+              </div>
+              <span className={styles.toolbarTabd}>tabd<span>.</span></span>
+              <Puzzle size={17} />
+              <EllipsisVertical size={16} />
+            </div>
+            <div className={styles.browserCanvas}>
+              <div className={styles.exampleArticle} aria-hidden="true">
+                <span>Design & everyday discoveries</span>
+                <p>A small collection of useful things.</p>
+                <div /><div /><div />
+              </div>
+              <Image
+                className={styles.extensionPopup}
+                src="/landing/extension-save.png"
+                alt="The Tabd Chrome extension with the current page filled in, a Save to collection selector set to Inbox, optional Add details, and the orange Save page button."
+                width={720}
+                height={920}
+                sizes="(max-width: 600px) 76vw, 320px"
+              />
+            </div>
+          </div>
+          <figcaption>Tabd Chrome extension · Example save, actual interface</figcaption>
         </figure>
       </section>
 
