@@ -87,6 +87,8 @@ A signed-in web session creates a 256-bit random, account-scoped token, with a 3
 
 ## Architecture
 
+See the [architecture overview](docs/architecture.md) for the component map and storage model, and [data-flow guide](docs/flow.md) for the save, search, preview recovery, and agent journeys.
+
 ### Personal-library MCP
 
 Connect coding agents from **Settings → Connect coding agents** (`/agents`). Tabd exposes five read-only tools for library search, references, collections, explicit taste preferences, and design context at `/api/mcp`. Agent tokens are separate from extension tokens, expire after 30 days, and can be revoked individually.
@@ -108,7 +110,7 @@ tests/               Validation, SSRF, PostgreSQL/RLS and Playwright browser tes
 - `bookmarks`, `collections`, `profiles`, `extension_tokens` all enable RLS. Composite foreign keys prevent cross-user collection assignments. Hierarchy writes reject cycles and depth beyond three levels.
 - Deleting a collection moves its direct resources to Inbox and promotes its children to top-level collections; it never deletes resources.
 - Tags are a validated `text[]` on each bookmark, with GIN indexing. This simpler MVP structure avoids an unnecessary join table and makes tags atomic with saves.
-- Full-text search spans title, description, hostname, notes and tags with a PostgreSQL `tsvector` and GIN index. The dashboard gives immediate local feedback, then loads database results after a short debounce. Library requests paginate in batches of 500.
+- Full-text search spans title, description, hostname, notes and tags with a PostgreSQL `tsvector` and GIN index. The dashboard loads the complete library in batches of 500 and consistently applies local substring matching. The resource API and MCP also support database keyword search.
 - URL normalization drops fragments and common tracking parameters, preserves meaningful query parameters and sorts them for stable duplicate detection. HTTP/HTTPS remain distinct.
 - Open tracking is atomic and records only opens through Tabd. Archive is independent from status.
 - Metadata requests allow HTTP/HTTPS on standard ports, reject private and special-use IPs, pin validated DNS results into the connection, validate each redirect, cap redirects, limit page responses to 512 KiB, and time out DNS and network activity. HTML is parsed without executing scripts. Metadata failure never prevents saving the URL.
