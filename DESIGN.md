@@ -159,9 +159,17 @@ Geist is the UI face, with Inter, Arial and sans-serif fallbacks. The body is 14
 
 ## Layout
 
-The dashboard retains a 236px navigation rail, 64px top toolbar and generous 40px workspace inset. The grid has three columns and 20px gaps, two columns at 1020px and one at 480px. Navigation becomes off-canvas at 760px; list mode preserves resource actions.
+The dashboard retains a 236px navigation rail and generous desktop workspace inset. The grid uses three columns on wide desktop, two below 1200px, and one below 640px. At 960px navigation becomes a modal drawer with focus containment, scroll locking, an explicit close action and focus restoration. Portrait iPad and Split View use the full workspace width; landscape iPad retains the rail. The compact toolbar stays visible while scrolling. Phone list records stack their actions below the content.
 
-The account surface uses a 3:1 art/form split at wide desktop sizes. At 1100px the form rail becomes 340px; at 700px the artwork stacks above the form. The mobile artwork is at least 260px high and otherwise 32svh. The form content caps at 360px. The auth surface brief owns the composition and interaction contract.
+The account surface uses a 3:1 art/form split at wide desktop sizes. At 1100px the form rail becomes 340px; at 700px the artwork stacks above the form. The mobile artwork is at least 260px high and otherwise 32svh. In short landscape viewports below 960px, account entry prioritizes the form and compact brand. The form content caps at 360px. The auth surface brief owns the composition and interaction contract.
+
+### Mobile and tablet interactions
+
+Coarse-pointer devices and compact viewports use at least 44px action heights, with 44px square icon controls. Text inputs and selects use 16px type; selects have an explicit 44px height for WebKit. Resource text and status controls remain legible on touch devices. Phone overview counts use two compact columns, status filters wrap, and list cards preserve every action. Panels and fixed surfaces account for safe-area insets, and touch users see the resource open indicator without hovering.
+
+The Chrome MV3 extension remains a desktop Chrome extension. Its popup keeps the preferred 360px width while fitting narrower viewports, limits height to the available viewport or 600px, scrolls details independently, and keeps the save action accessible in short windows. Mobile and iPad users can copy a URL and use Add resource in the web library; the landing page and extension setup panel explain this path. This does not add a native Safari extension.
+
+Responsive validation: 12 browser checks passed across 320px phone, iPhone WebKit, portrait/landscape iPad WebKit, landscape phone and desktop emulation; 24 existing library/search/auth checks passed. Web and extension builds, TypeScript checks and targeted lint passed. The real Chrome extension runtime passed save, duplicate, retry, account-link and narrow/short-window checks, including synthesized touch input. Layouts were visually reviewed; no physical iPhone/iPad or hosted account persistence was tested in this pass.
 
 ## Elevation & Depth
 

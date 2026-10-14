@@ -1,6 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, EllipsisVertical, Puzzle, RotateCw, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  EllipsisVertical,
+  Puzzle,
+  RotateCw,
+  SlidersHorizontal,
+} from "lucide-react";
 import { AuthWordmark } from "@/components/auth-wordmark";
 import { LandingHeadline } from "@/components/landing-headline";
 import styles from "./landing-page.module.css";
@@ -81,6 +90,10 @@ export function LandingPage() {
             Save the page you’re on with the Tabd Chrome extension. Your next
             good find goes straight to your library, without breaking your flow.
           </p>
+          <p className={styles.deviceNote}>
+            On your phone or iPad, copy a link and save it with Add resource in
+            your library. The extension is for desktop Chrome.
+          </p>
           <ol className={styles.saveSteps}>
             <li>
               <strong>Open Tabd in your toolbar</strong>
@@ -102,7 +115,9 @@ export function LandingPage() {
         <figure className={styles.extensionPreview}>
           <div className={styles.browserFrame}>
             <div className={styles.browserTab} aria-hidden="true">
-              <span /><span /><span />
+              <span />
+              <span />
+              <span />
               <div>A small collection of useful things</div>
             </div>
             <div className={styles.browserToolbar} aria-hidden="true">
@@ -111,7 +126,9 @@ export function LandingPage() {
               <div className={styles.browserAddress}>
                 <SlidersHorizontal size={13} /> example.com/design
               </div>
-              <span className={styles.toolbarTabd}>tabd<span>.</span></span>
+              <span className={styles.toolbarTabd}>
+                tabd<span>.</span>
+              </span>
               <Puzzle size={17} />
               <EllipsisVertical size={16} />
             </div>
@@ -119,7 +136,9 @@ export function LandingPage() {
               <div className={styles.exampleArticle} aria-hidden="true">
                 <span>Design & everyday discoveries</span>
                 <p>A small collection of useful things.</p>
-                <div /><div /><div />
+                <div />
+                <div />
+                <div />
               </div>
               <Image
                 className={styles.extensionPopup}
@@ -131,7 +150,9 @@ export function LandingPage() {
               />
             </div>
           </div>
-          <figcaption>Tabd Chrome extension · Example save, actual interface</figcaption>
+          <figcaption>
+            Tabd Chrome extension · Example save, actual interface
+          </figcaption>
         </figure>
       </section>
 

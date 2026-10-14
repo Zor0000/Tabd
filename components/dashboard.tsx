@@ -37,6 +37,7 @@ import { ResourceCard } from "./resource-card";
 import { SaveResource } from "./save-resource";
 import { CollectionEditor } from "./collection-editor";
 import { Sheet } from "./ui/dialog";
+import { LibraryNavigation } from "./library-navigation";
 import { Button } from "./ui/button";
 import { browserClient } from "@/lib/supabase/client";
 import type { Collection, Resource, ResourceInput, Status } from "@/lib/types";
@@ -117,6 +118,7 @@ export function Dashboard({
   const [deleting, setDeleting] = useState<Resource | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const navigationTriggerRef = useRef<HTMLButtonElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const notify = useCallback((message: string) => {
     setToast(message);
@@ -411,14 +413,11 @@ export function Dashboard({
   }
   return (
     <div className="app-shell">
-      {mobile && (
-        <button
-          className="mobile-backdrop"
-          aria-label="Close navigation"
-          onClick={() => setMobile(false)}
-        />
-      )}
-      <aside className={`sidebar ${mobile ? "sidebar-open" : ""}`}>
+      <LibraryNavigation
+        open={mobile}
+        onOpenChange={setMobile}
+        triggerRef={navigationTriggerRef}
+      >
         <Link className="brand" href="/" aria-label="Tabd home">
           <span className="brand-symbol">
             <i />
@@ -427,7 +426,13 @@ export function Dashboard({
           </span>
           tabd<span className="brand-period">.</span>
         </Link>
-        <button className="workspace-switch" onClick={() => setSettings(true)}>
+        <button
+          className="workspace-switch"
+          onClick={() => {
+            setMobile(false);
+            setSettings(true);
+          }}
+        >
           <span className="workspace-avatar">
             {preview ? "P" : (displayName || email || "M")[0].toUpperCase()}
           </span>
@@ -482,6 +487,7 @@ export function Dashboard({
             <button
               aria-label="Create collection"
               onClick={() => {
+                setMobile(false);
                 setEditingCollection(null);
                 setCollectionOpen(true);
               }}
@@ -493,6 +499,7 @@ export function Dashboard({
           <button
             className="nav-item new-collection"
             onClick={() => {
+              setMobile(false);
               setEditingCollection(null);
               setCollectionOpen(true);
             }}
@@ -507,8 +514,15 @@ export function Dashboard({
               <Puzzle size={19} />
             </span>
             <h3>A good find? Tabd.</h3>
-            <p>Save from anywhere with the Chrome extension.</p>
-            <button onClick={() => setExtensionInfo(true)}>
+            <p>
+              Save from desktop Chrome, or add a link from your phone or iPad.
+            </p>
+            <button
+              onClick={() => {
+                setMobile(false);
+                setExtensionInfo(true);
+              }}
+            >
               Get the extension <ArrowUpRight size={14} />
             </button>
           </div>
@@ -520,7 +534,13 @@ export function Dashboard({
             <span>Archived</span>
             {counts.archived > 0 && <small>{counts.archived}</small>}
           </button>
-          <button className="nav-item" onClick={() => setSettings(true)}>
+          <button
+            className="nav-item"
+            onClick={() => {
+              setMobile(false);
+              setSettings(true);
+            }}
+          >
             <Settings2 size={16} />
             <span>Settings</span>
           </button>
@@ -529,12 +549,14 @@ export function Dashboard({
             <span>Less searching. More doing.</span>
           </div>
         </div>
-      </aside>
-      <div className="main-column" inert={mobile}>
+      </LibraryNavigation>
+      <div className="main-column">
         <header className="topbar">
           <button
             className="button button-ghost button-icon mobile-menu"
             aria-label="Open navigation"
+            aria-expanded={mobile}
+            ref={navigationTriggerRef}
             onClick={() => setMobile(true)}
           >
             <Menu size={19} />
@@ -771,6 +793,7 @@ export function Dashboard({
                 className={`filter-button ${filters ? "selected" : ""}`}
                 onClick={() => setFilters(!filters)}
                 aria-expanded={filters}
+                aria-label="Filters"
               >
                 <SlidersHorizontal size={14} />
                 Filters
@@ -965,9 +988,9 @@ export function Dashboard({
               </Button>
             </form>
           )}
-          <label>
-            Appearance
-            <div className="theme-options">
+          <div className="appearance-field">
+            <span>Appearance</span>
+            <div className="theme-options" role="group" aria-label="Appearance">
               <Button
                 variant={theme === "light" ? "default" : "secondary"}
                 onClick={() => changeTheme("light")}
@@ -983,7 +1006,7 @@ export function Dashboard({
                 Dark
               </Button>
             </div>
-          </label>
+          </div>
           <label>
             Default resource view
             <select value={view} onChange={(e) => changeView(e.target.value)}>
@@ -1061,6 +1084,24 @@ export function Dashboard({
         description="Keep the web’s useful things without breaking your flow."
       >
         <div className="sheet-form">
+          <div className="mobile-saving-guide">
+            <h3>Saving from a phone or iPad?</h3>
+            <p>
+              Copy a page’s link, then use Add resource in your library. The
+              Chrome extension runs on desktop Chrome.
+            </p>
+            <Button
+              onClick={() => {
+                setExtensionInfo(false);
+                setSettings(false);
+                setMobile(false);
+                setEditing(null);
+                setSaveOpen(true);
+              }}
+            >
+              Add a link <Plus size={16} />
+            </Button>
+          </div>
           <div className="extension-explainer">
             <Puzzle size={36} />
             <h3>Click. Choose. Saved.</h3>
