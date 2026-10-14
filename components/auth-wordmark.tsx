@@ -14,7 +14,7 @@ import Link from "next/link";
 const lettering =
   "M30 25H100V105H185V170H100V255Q100 290 140 290H185V355H137Q30 355 30 260V170H0V105H30Z M335 105C250 105 205 158 205 230S250 355 335 355H455V230C455 158 410 105 335 105Z M335 170C371 170 390 195 390 230S371 290 335 290S270 265 270 230S299 170 335 170Z M480 0H545V120Q570 105 605 105C680 105 730 158 730 230S680 355 605 355H480Z M605 170C569 170 545 195 545 230S569 290 605 290S665 265 665 230S641 170 605 170Z M935 0H1000V355H875C800 355 750 302 750 230S800 105 875 105Q910 105 935 120Z M875 170C839 170 815 195 815 230S839 290 875 290S935 265 935 230S911 170 875 170Z";
 
-export function AuthWordmark() {
+export function AuthWordmark({ showChrome = true }: { showChrome?: boolean }) {
   const panel = useRef<HTMLElement>(null);
   const mark = useRef<SVGSVGElement>(null);
   const reduced = useReducedMotion();
@@ -36,7 +36,9 @@ export function AuthWordmark() {
     y.set(((event.clientY - bounds.top) / bounds.height) * 100);
     const matrix = mark.current?.getScreenCTM();
     if (matrix) {
-      const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+      const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+        matrix.inverse(),
+      );
       reflectionX.set(point.x);
       reflectionY.set(point.y);
     }
@@ -49,13 +51,19 @@ export function AuthWordmark() {
       aria-label="Tabd, your personal web library"
     >
       <div className="auth-metal-grain" aria-hidden="true" />
-      <nav className="auth-art-nav" aria-label="Library preview">
-        <Link href="/preview">
-          Explore the library <span aria-hidden="true">↗</span>
-        </Link>
-      </nav>
+      {showChrome && (
+        <nav className="auth-art-nav" aria-label="Library preview">
+          <Link href="/preview">
+            Explore the library <span aria-hidden="true">↗</span>
+          </Link>
+        </nav>
+      )}
       <div className="auth-engraving" aria-hidden="true">
-        <svg ref={mark} viewBox="-15 -15 1030 390" className="auth-engraved-mark">
+        <svg
+          ref={mark}
+          viewBox="-15 -15 1030 390"
+          className="auth-engraved-mark"
+        >
           <defs>
             <filter
               id="engraved"
@@ -129,7 +137,13 @@ export function AuthWordmark() {
                 <stop offset=".82" stopColor="#94bfff" stopOpacity=".8" />
                 <stop offset="1" stopColor="#b9bcc0" stopOpacity="0" />
               </motion.radialGradient>
-              <filter id="reflection-rim" x="-10%" y="-20%" width="120%" height="140%">
+              <filter
+                id="reflection-rim"
+                x="-10%"
+                y="-20%"
+                width="120%"
+                height="140%"
+              >
                 <feGaussianBlur stdDeviation="5" />
               </filter>
             </defs>
@@ -151,10 +165,12 @@ export function AuthWordmark() {
           </svg>
         </div>
       </motion.div>
-      <footer className="auth-art-footer">
-        <span>Your useful corner of the internet.</span>
-        <span>© TABD {new Date().getFullYear()}</span>
-      </footer>
+      {showChrome && (
+        <footer className="auth-art-footer">
+          <span>Your useful corner of the internet.</span>
+          <span>© TABD {new Date().getFullYear()}</span>
+        </footer>
+      )}
     </section>
   );
 }
