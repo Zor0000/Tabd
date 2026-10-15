@@ -142,6 +142,7 @@
 }
 .intro,
 .extension,
+.mcp,
 .library,
 .organize,
 .cta,
@@ -427,6 +428,89 @@
 .detailScreenshot {
   width: 125%;
 }
+.mcp {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 8%;
+  padding-block: 110px;
+  background: #f3f0e9;
+  scroll-margin-top: 24px;
+}
+.mcpCopy > p {
+  max-width: 48ch;
+  margin: 26px 0 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #686b70;
+}
+.mcpBenefits {
+  margin: 32px 0 0;
+}
+.mcpBenefits > div {
+  padding-block: 17px;
+  border-top: 1px solid #dededb;
+}
+.mcpBenefits dt {
+  font-size: 15px;
+  font-weight: 550;
+}
+.mcpBenefits dd {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #686b70;
+}
+.mcpCopy > .mcpAccess {
+  margin-top: 12px;
+  font-size: 13px;
+}
+.mcpPrompt {
+  padding: 30px 32px;
+  background: #e8e5dc;
+  border-radius: 12px 12px 0 0;
+}
+.mcpPrompt > span {
+  font-size: 12px;
+  color: #50545a;
+}
+.mcpPrompt blockquote {
+  margin: 18px 0 0;
+  font-size: clamp(21px, 2vw, 28px);
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.mcpContext {
+  padding: 32px;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+}
+.mcpContext h3 {
+  margin: 0 0 26px;
+  font-size: 16px;
+  font-weight: 550;
+}
+.mcpContext dl {
+  margin: 0;
+}
+.mcpContext dl > div + div {
+  margin-top: 24px;
+}
+.mcpContext dt {
+  font-size: 12px;
+  color: #b73908;
+}
+.mcpContext dd {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.mcpContext dd span {
+  display: block;
+  color: #686b70;
+  font-size: 12px;
+  margin-top: 3px;
+}
 .cta {
   padding-block: 110px;
   text-align: center;
@@ -475,6 +559,16 @@
   font-size: 12px;
 }
 @media (max-width: 900px) {
+  .mcp {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    padding-block: 90px;
+  }
+  .mcpExample {
+    width: 100%;
+    max-width: 620px;
+    justify-self: center;
+  }
   .hero {
     min-height: 650px;
   }
@@ -539,6 +633,7 @@
   }
   .intro,
   .extension,
+  .mcp,
   .library,
   .organize,
   .cta,
@@ -576,6 +671,13 @@
   .extension {
     padding-block: 72px;
   }
+  .mcp {
+    padding-block: 72px;
+  }
+  .mcpPrompt,
+  .mcpContext {
+    padding: 26px 24px;
+  }
   .browserToolbar {
     gap: 8px;
     padding-inline: 10px;
@@ -608,7 +710,7 @@
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 420px) {
   .header { flex-wrap: wrap; gap: 12px; }
   .header nav { width: 100%; justify-content: space-between; gap: 8px; }
 }
