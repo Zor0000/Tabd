@@ -31,6 +31,7 @@ export function LandingPage() {
           <nav aria-label="Main navigation">
             <a href="#benefits">Discover Tabd</a>
             <a href="#extension">Extension</a>
+            <a href="#mcp">MCP</a>
             <Link href="/login">
               Sign in <ArrowUpRight size={15} />
             </Link>
@@ -220,6 +221,71 @@ export function LandingPage() {
             sizes="(max-width: 900px) 94vw, 62vw"
           />
           <figcaption>Design inspiration · An example collection</figcaption>
+        </figure>
+      </section>
+
+      <section className={styles.mcp} id="mcp" aria-labelledby="mcp-title">
+        <div className={styles.mcpCopy}>
+          <h2 id="mcp-title">
+            Your next build starts
+            <br />
+            with your good finds.
+          </h2>
+          <p>
+            Connect your coding agent to Tabd through MCP. Bring saved references,
+            personal notes, and your design preferences into the conversation,
+            without gathering the same links again.
+          </p>
+          <dl className={styles.mcpBenefits}>
+            <div>
+              <dt>Find the right starting point</dt>
+              <dd>Search your saved sites by keyword, tag, or collection.</dd>
+            </div>
+            <div>
+              <dt>Keep the reason you saved it</dt>
+              <dd>Your notes and favorites help explain what matters to you.</dd>
+            </div>
+            <div>
+              <dt>Give your agent a design brief</dt>
+              <dd>Retrieve matching references and preferences you’ve written in one request.</dd>
+            </div>
+          </dl>
+          <Link className={styles.textLink} href="/agents">
+            Connect your coding agent <ArrowUpRight size={17} />
+          </Link>
+          <p className={styles.mcpAccess}>
+            Read-only access. Your agent can’t edit your library. Revoke its token
+            whenever you like.
+          </p>
+        </div>
+        <figure className={styles.mcpExample}>
+          <div className={styles.mcpPrompt}>
+            <span>Ask your connected agent</span>
+            <blockquote>
+              “Find dashboard references in my Tabd library, and bring in my
+              notes and design preferences.”
+            </blockquote>
+          </div>
+          <div className={styles.mcpContext}>
+            <h3>Context from your library</h3>
+            <dl>
+              <div>
+                <dt>Saved reference</dt>
+                <dd>Dashboard inspiration <span>Original link + saved details</span></dd>
+              </div>
+              <div>
+                <dt>Your note</dt>
+                <dd>“Keep the navigation compact and the content easy to scan.”</dd>
+              </div>
+              <div>
+                <dt>Your preferences</dt>
+                <dd>“Quiet surfaces, clear typography, one strong accent.”</dd>
+              </div>
+            </dl>
+          </div>
+          <figcaption>
+            Illustrative MCP workflow · Example content, not a live conversation
+          </figcaption>
         </figure>
       </section>
 
