@@ -1,3 +1,4 @@
+import { operationalEvent } from "../monitoring";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { ApiError } from "../api";
@@ -23,11 +24,16 @@ const annotations = {
 async function result(run: () => Promise<object>) {
   try {
     const data = await run();
+    operationalEvent("mcp_tool", { outcome: "success" });
     return {
       content: [{ type: "text" as const, text: JSON.stringify(data) }],
       structuredContent: { ...data },
     };
   } catch (error) {
+    operationalEvent("mcp_tool", {
+      outcome: "failure",
+      status: error instanceof ApiError ? error.status : 500,
+    });
     return {
       isError: true,
       content: [

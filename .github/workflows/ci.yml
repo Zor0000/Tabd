@@ -45,6 +45,8 @@ jobs:
         run: npm test
       - name: Build dashboard
         run: npm run build
+      - name: Verify serverless preview bundle
+        run: node scripts/check-preview-bundle.mjs
       - name: Build extension
         run: npm run build --prefix extension
       - name: Check extension types

@@ -9,7 +9,11 @@ const config: NextConfig = {
     "@sparticuz/chromium",
   ],
   outputFileTracingIncludes: {
-    "/api/resources/*/preview": ["./node_modules/@sparticuz/chromium/bin/**/*"],
+    "/api/resources/*/preview": [
+      "./node_modules/@sparticuz/chromium/bin/**/*",
+      // Playwright resolves this registry dynamically; Next's trace misses it.
+      "./node_modules/playwright-core/browsers.json",
+    ],
   },
   async headers() {
     return [

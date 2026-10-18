@@ -1,9 +1,10 @@
+import { monitored } from "@/lib/monitoring";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { ApiError, body, failure, json } from "@/lib/api";
 import { dashboardActor, tokenHash } from "@/lib/mcp/auth";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const { db, userId } = await dashboardActor(request);
     const { data, error } = await db
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     const { db, userId } = await dashboardActor(request);
     if (!process.env.SUPABASE_SECRET_KEY)
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+async function handleDELETE(request: Request) {
   try {
     const { db, userId } = await dashboardActor(request);
     const input = z
@@ -66,3 +67,7 @@ export async function DELETE(request: Request) {
     return failure(error);
   }
 }
+
+export const GET = monitored("GET /api/mcp-tokens", handleGET);
+export const POST = monitored("POST /api/mcp-tokens", handlePOST);
+export const DELETE = monitored("DELETE /api/mcp-tokens", handleDELETE);

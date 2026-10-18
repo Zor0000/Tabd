@@ -1,8 +1,9 @@
+import { monitored } from "@/lib/monitoring";
 import { z } from "zod";
 import { ApiError, body, failure, json } from "@/lib/api";
 import { dashboardActor } from "@/lib/mcp/auth";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const { db, userId } = await dashboardActor(request);
     const { data, error } = await db
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   try {
     const { db, userId } = await dashboardActor(request);
     const input = z
@@ -41,3 +42,6 @@ export async function PUT(request: Request) {
     return failure(error);
   }
 }
+
+export const GET = monitored("GET /api/taste-profile", handleGET);
+export const PUT = monitored("PUT /api/taste-profile", handlePUT);

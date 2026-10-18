@@ -1,3 +1,5 @@
+import { monitored } from "@/lib/monitoring";
+import { RateLimitError } from "@/lib/rate-limit";
 import { z } from "zod";
 import { actor, ApiError, failure } from "@/lib/api";
 import { persistedCapture } from "@/lib/preview-storage";
@@ -5,7 +7,7 @@ import { persistedCapture } from "@/lib/preview-storage";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-export async function GET(
+async function handleGET(
   request: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
@@ -32,13 +34,12 @@ export async function GET(
         },
       });
     } catch (error) {
-      console.warn(
-        "Website preview unavailable:",
-        error instanceof Error ? error.message : "Capture failed",
-      );
+      if (error instanceof RateLimitError) throw error;
       throw new ApiError("Landing-page preview unavailable.", 502);
     }
   } catch (error) {
     return failure(error);
   }
 }
+
+export const GET = monitored("GET /api/resources/[id]/preview", handleGET);

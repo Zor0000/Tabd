@@ -1,3 +1,4 @@
+import { enforceLimit } from "../rate-limit";
 import { createClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
 import { actor, ApiError } from "../api";
@@ -51,5 +52,6 @@ export async function mcpActor(request: Request) {
       "Agent token expired or revoked. Create a new token in /agents.",
       401,
     );
+  await enforceLimit(data.user_id as string, "mcp");
   return { db, userId: data.user_id as string };
 }

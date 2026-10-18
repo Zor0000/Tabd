@@ -1,3 +1,8 @@
+vi.mock("../lib/rate-limit", async (original) => ({
+  ...(await original<typeof import("../lib/rate-limit")>()),
+  enforceLimit: vi.fn(),
+  limitActor: vi.fn(),
+}));
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { actor } from "../lib/api";
 import { serverClient } from "../lib/supabase/server";

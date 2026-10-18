@@ -449,3 +449,47 @@ describe("real PostgreSQL schema and RLS", () => {
     expect((await search(bob)).rows).toHaveLength(0);
   });
 });
+
+describe("distributed API counters", () => {
+  it("restricts the counter RPC and storage to the server role", async () => {
+    await asUser(alice);
+    await expect(
+      db.query("select consume_api_limit('alice','read',3,60)"),
+    ).rejects.toThrow();
+    await expect(
+      db.query("select * from private.api_rate_limits"),
+    ).rejects.toThrow();
+    await db.exec("reset role; set role anon;");
+    await expect(
+      db.query("select consume_api_limit('alice','read',3,60)"),
+    ).rejects.toThrow();
+  });
+  it("admits exactly the limit under concurrent calls and isolates accounts", async () => {
+    await db.exec("reset role; set role service_role;");
+    const results = await Promise.all(
+      Array.from({ length: 12 }, () =>
+        db.query<{ result: { allowed: boolean } }>(
+          "select consume_api_limit('concurrency','read',3,86400) as result",
+        ),
+      ),
+    );
+    expect(results.filter((r) => r.rows[0].result.allowed)).toHaveLength(3);
+    expect(
+      (
+        await db.query<{ result: { allowed: boolean } }>(
+          "select consume_api_limit('other','read',3,86400) as result",
+        )
+      ).rows[0].result.allowed,
+    ).toBe(true);
+    await db.exec(
+      "update private.api_rate_limits set window_start = now() - interval '2 days' where subject='concurrency';",
+    );
+    expect(
+      (
+        await db.query<{ result: { allowed: boolean } }>(
+          "select consume_api_limit('concurrency','read',3,86400) as result",
+        )
+      ).rows[0].result.allowed,
+    ).toBe(true);
+  });
+});

@@ -1,3 +1,9 @@
+import { enforceLimit, RateLimitError } from "../lib/rate-limit";
+vi.mock("../lib/rate-limit", async (original) => ({
+  ...(await original<typeof import("../lib/rate-limit")>()),
+  enforceLimit: vi.fn(),
+  limitActor: vi.fn(),
+}));
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { persistedCapture, previewObjectPath } from "../lib/preview-storage";
 import { websiteCapture } from "../lib/website-capture";
@@ -20,6 +26,7 @@ describe("durable private preview storage", () => {
       await persistedCapture(database, "owner", "id", "https://example.com/"),
     ).toEqual(jpeg);
     expect(websiteCapture).not.toHaveBeenCalled();
+    expect(enforceLimit).not.toHaveBeenCalled();
   });
   it("generates and saves a missing capture under the owner's bookmark", async () => {
     await persistedCapture(database, "owner", "id", "https://example.com/");
@@ -56,4 +63,12 @@ describe("durable private preview storage", () => {
       ),
     ).toBe(original);
   });
+});
+
+it("does not launch Chromium when the shared capture budget is exhausted", async () => {
+  vi.mocked(enforceLimit).mockRejectedValueOnce(new RateLimitError(429, 30));
+  await expect(
+    persistedCapture(database, "owner", "id", "https://example.com/"),
+  ).rejects.toMatchObject({ status: 429 });
+  expect(websiteCapture).not.toHaveBeenCalled();
 });

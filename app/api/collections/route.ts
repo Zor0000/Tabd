@@ -1,3 +1,4 @@
+import { monitored } from "@/lib/monitoring";
 import {
   actor,
   body,
@@ -7,7 +8,7 @@ import {
   ownedCollection,
 } from "@/lib/api";
 import { collectionSchema } from "@/lib/validation";
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const { db, userId } = await actor(request);
     const { data, error } = await db
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
     return failure(e);
   }
 }
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     const { db, userId } = await actor(request);
     const parsed = collectionSchema.safeParse(await body(request));
@@ -41,3 +42,6 @@ export async function POST(request: Request) {
     return failure(e);
   }
 }
+
+export const GET = monitored("GET /api/collections", handleGET);
+export const POST = monitored("POST /api/collections", handlePOST);
