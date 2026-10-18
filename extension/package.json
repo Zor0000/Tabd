@@ -1,1 +1,24 @@
-{"name":"tabd-extension","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"wxt","build":"wxt build","typecheck":"tsc --noEmit","postinstall":"wxt prepare"},"dependencies":{"@wxt-dev/module-react":"1.2.2","react":"19.3.0","react-dom":"19.3.0","wxt":"0.21.4"},"devDependencies":{"@types/react":"19.3.0","@types/react-dom":"19.3.0","typescript":"7.0.2"}}
+{
+  "name": "tabd-extension",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "node scripts/build.mjs",
+    "build:test": "node scripts/build.mjs --test",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "@wxt-dev/module-react": "1.2.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "wxt": "0.21.4"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

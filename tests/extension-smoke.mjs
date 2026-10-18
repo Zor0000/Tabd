@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import assert from "node:assert/strict";
 
-const extension = path.resolve("extension/.output/chrome-mv3");
+const extension = path.resolve("extension/.output-test/chrome-mv3");
 const manifest = JSON.parse(
   await readFile(path.join(extension, "manifest.json"), "utf8"),
 );

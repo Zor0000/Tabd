@@ -69,7 +69,7 @@ let firstClosed = false;
 const profile = await mkdtemp(path.join(tmpdir(), "tabd-link-test-"));
 let context;
 try {
-  const extension = path.resolve("extension/.output/chrome-mv3");
+  const extension = path.resolve("extension/.output-test/chrome-mv3");
   context = await chromium.launchPersistentContext(profile, {
     channel: "chromium",
     headless: true,
