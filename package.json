@@ -11,7 +11,7 @@
     "test:e2e": "playwright test",
     "test:responsive": "playwright test --config playwright.responsive.config.ts",
     "lint": "eslint .",
-    "test:extension": "node tests/extension-smoke.mjs && node tests/extension-link.mjs",
+    "test:extension": "npm run build:test --prefix extension && node tests/extension-smoke.mjs && node tests/extension-link.mjs && node tests/extension-production.mjs",
     "test:mcp:live": "node scripts/mcp-smoke.mjs"
   },
   "dependencies": {

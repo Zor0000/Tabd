@@ -8,6 +8,7 @@ export default defineConfig([
     ".next/**",
     ".next-test/**",
     "extension/.output/**",
+    "extension/.output-test/**",
     "extension/.wxt/**",
     "test-results/**",
     "playwright-report/**",

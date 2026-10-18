@@ -13,6 +13,7 @@ const icons = {
   128: "icons/icon-128.png",
 };
 export default defineConfig({
+  outDir: process.env.TABD_EXTENSION_OUT_DIR || ".output",
   modules: ["@wxt-dev/module-react"],
   vite: () => ({
     define: { "import.meta.env.WXT_APP_URL": JSON.stringify(appUrl) },

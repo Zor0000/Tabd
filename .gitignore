@@ -10,6 +10,7 @@ build/
 next-env.d.ts
 *.tsbuildinfo
 extension/.output/
+extension/.output-test/
 extension/.wxt/
 
 # Local environment and credentials (keep templates)
