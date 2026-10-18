@@ -1,3 +1,4 @@
+import { operationalEvent } from "./monitoring";
 import type { actor } from "./api";
 import { ApiError } from "./api";
 import { metadata } from "./metadata";
@@ -59,7 +60,9 @@ export async function recoverResourceMetadata(
   let fetched: Awaited<ReturnType<typeof metadata>>;
   try {
     fetched = await metadata(resource.url);
+    operationalEvent("metadata_fetch", { outcome: "success" });
   } catch (error) {
+    operationalEvent("metadata_fetch", { outcome: "failure" });
     const blocked =
       error instanceof PublicFetchError && error.kind === "unsafe";
     const { data, error: saveError } = await db

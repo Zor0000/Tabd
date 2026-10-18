@@ -1,3 +1,4 @@
+import { monitored } from "@/lib/monitoring";
 import { after } from "next/server";
 import { recoverResourceMetadata } from "@/lib/resource-metadata";
 import {
@@ -9,7 +10,7 @@ import {
   ownedCollection,
 } from "@/lib/api";
 import { resourceSchema, normalizeUrl } from "@/lib/validation";
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const { db, userId } = await actor(request);
     const params = new URL(request.url).searchParams;
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
     return failure(e);
   }
 }
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     const { db, userId } = await actor(request);
     const parsed = resourceSchema.safeParse(await body(request));
@@ -75,3 +76,6 @@ export async function POST(request: Request) {
     return failure(e);
   }
 }
+
+export const GET = monitored("GET /api/resources", handleGET);
+export const POST = monitored("POST /api/resources", handlePOST);

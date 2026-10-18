@@ -1,3 +1,5 @@
+import { enforceLimit } from "./rate-limit";
+import { operationalEvent } from "./monitoring";
 import { createHash } from "node:crypto";
 import type { actor } from "./api";
 import { normalizeUrl } from "./validation";
@@ -48,7 +50,25 @@ export async function persistedCapture(
   } catch {
     /* Storage outages do not hide a capture we can regenerate. */
   }
-  const image = await websiteCapture(url);
+  await enforceLimit(userId, "capture");
+  await enforceLimit(userId, "captureDaily");
+  await enforceLimit("global", "captureGlobal");
+  const started = performance.now();
+  let image: Buffer;
+  try {
+    image = await websiteCapture(url);
+    operationalEvent("capture", {
+      outcome: "success",
+      durationMs: Math.round(performance.now() - started),
+    });
+  } catch (error) {
+    operationalEvent("capture", {
+      outcome: "failure",
+      status: 502,
+      durationMs: Math.round(performance.now() - started),
+    });
+    throw error;
+  }
   if (validJpeg(image)) {
     try {
       const { error } = await bounded(

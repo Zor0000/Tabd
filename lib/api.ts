@@ -1,3 +1,4 @@
+import { limitActor, RateLimitError } from "./rate-limit";
 import { createClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
 import { serverClient } from "./supabase/server";
@@ -38,6 +39,7 @@ export async function actor(request: Request) {
         "Extension link expired. Reconnect your account.",
         401,
       );
+    await limitActor(request, data.user_id as string);
     return { db, userId: data.user_id as string, extension: true };
   }
   if (!["GET", "HEAD"].includes(request.method)) {
@@ -54,6 +56,7 @@ export async function actor(request: Request) {
     data: { user },
   } = await db.auth.getUser();
   if (!user) throw new ApiError("Please sign in to continue.", 401);
+  await limitActor(request, user.id);
   return { db, userId: user.id, extension: false };
 }
 export function json(data: unknown, status = 200) {
@@ -63,6 +66,11 @@ export function json(data: unknown, status = 200) {
   });
 }
 export function failure(error: unknown) {
+  if (error instanceof RateLimitError) {
+    const response = json({ error: error.message }, error.status);
+    response.headers.set("Retry-After", String(error.retryAfter));
+    return response;
+  }
   if (error instanceof ApiError)
     return json({ error: error.message }, error.status);
   return json({ error: "Something went wrong. Please try again." }, 500);

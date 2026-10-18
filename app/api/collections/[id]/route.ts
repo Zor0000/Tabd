@@ -1,3 +1,4 @@
+import { monitored } from "@/lib/monitoring";
 import {
   actor,
   body,
@@ -8,7 +9,7 @@ import {
 } from "@/lib/api";
 import { collectionPatch } from "@/lib/validation";
 type Context = { params: Promise<{ id: string }> };
-export async function PATCH(request: Request, ctx: Context) {
+async function handlePATCH(request: Request, ctx: Context) {
   try {
     const { db, userId } = await actor(request);
     const { id } = await ctx.params;
@@ -32,7 +33,7 @@ export async function PATCH(request: Request, ctx: Context) {
     return failure(e);
   }
 }
-export async function DELETE(request: Request, ctx: Context) {
+async function handleDELETE(request: Request, ctx: Context) {
   try {
     const { db, userId } = await actor(request);
     const { id } = await ctx.params;
@@ -47,3 +48,6 @@ export async function DELETE(request: Request, ctx: Context) {
     return failure(e);
   }
 }
+
+export const PATCH = monitored("PATCH /api/collections/[id]", handlePATCH);
+export const DELETE = monitored("DELETE /api/collections/[id]", handleDELETE);

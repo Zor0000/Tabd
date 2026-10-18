@@ -1,3 +1,4 @@
+import { monitored } from "@/lib/monitoring";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { ApiError, failure } from "@/lib/api";
 import { mcpActor } from "@/lib/mcp/auth";
@@ -7,7 +8,7 @@ import { createMcpServer } from "@/lib/mcp/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     const actor = await mcpActor(request);
     // A fresh server per request prevents any cross-account session state.
@@ -40,3 +41,5 @@ export function GET() {
   });
 }
 export const DELETE = GET;
+
+export const POST = monitored("POST /api/mcp", handlePOST);

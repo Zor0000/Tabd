@@ -1,8 +1,9 @@
+import { monitored } from "@/lib/monitoring";
 import { actor, body, failure, json, ApiError } from "@/lib/api";
 import { metadata } from "@/lib/metadata";
 import { resourceSchema } from "@/lib/validation";
 export const runtime = "nodejs";
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     await actor(request);
     const input = resourceSchema
@@ -20,3 +21,5 @@ export async function POST(request: Request) {
     return failure(e);
   }
 }
+
+export const POST = monitored("POST /api/metadata", handlePOST);
