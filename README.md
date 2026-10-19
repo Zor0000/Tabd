@@ -6,6 +6,8 @@ A developer-first personal web library. Next.js dashboard first, with a WXT Chro
 
 Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, Supabase/PostgreSQL, and WXT. Save useful links, organize them into collections, and find them again from the dashboard or Chrome extension.
 
+Try the live website at **https://www.tab-dd.tech**. Download the [unpacked extension pilot release](https://github.com/Zor0000/Tabd/releases/tag/extension-v0.1.1) and follow the [installation guide](docs/extension-release.md). Chrome Web Store submission is being prepared; no store listing is live yet. New unpacked IDs need operator registration before pairing.
+
 ## Current status
 
 Implemented: dashboard, protected account routes, email/password authentication, optional Google OAuth, save/edit/delete, duplicate detection and update, three-level collections, favorites, archive, status management, database full-text search, client filtering, grid/list preferences, opening history, revisit suggestions, JSON export, profile name, light/dark themes, metadata retrieval, and Chrome account linking.
@@ -26,7 +28,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-This is a private repository; cloning requires access to `Zor0000/Tabd`. If you do not use nvm, install Node.js 26 before running the npm commands.
+This repository is public. If you do not use nvm, install Node.js 26 before running the npm commands.
 
 Open http://localhost:3000. If that port is occupied, use `npm run dev -- --port 3210` and use that origin in the setup below. `/preview` always opens the sample library; real signed-in accounts start empty.
 
@@ -60,13 +62,13 @@ The publishable key is safe in the browser because tables enforce RLS. The secre
 cd extension
 npm ci
 cp .env.example .env
-npm run build
+npm run dev
 ```
 
-Set `WXT_APP_URL` in `extension/.env` to your dashboard origin. The default is `http://localhost:3000`. For local development, the extension discovers Tabd on `localhost` or `127.0.0.1`, verifies `/api/extension/status`, and remembers the address used for a successful link. If you start Tabd on another port, open its dashboard in the same browser; no extension rebuild is needed for that port change. Hosted builds allow only the configured origin and must be rebuilt after changing its domain.
+Set `WXT_APP_URL` in `extension/.env` to your local dashboard origin for development. The development default is `http://localhost:3000`. Production builds (`npm run build --prefix extension` from the repository root) deliberately target `https://www.tab-dd.tech` and ignore local `.env` origin values. Use an explicit HTTPS `WXT_APP_URL` environment variable to build for another hosted instance. For local development, the extension discovers Tabd on `localhost` or `127.0.0.1`, verifies `/api/extension/status`, and remembers the address used for a successful link. If you start Tabd on another port, open its dashboard in the same browser; no extension rebuild is needed for that port change. Hosted builds allow only the configured origin and must be rebuilt after changing its domain.
 
 1. Open `chrome://extensions` and enable Developer mode.
-2. Click **Load unpacked** and choose `extension/.output/chrome-mv3`.
+2. Click **Load unpacked** and choose the directory reported by WXT (normally `extension/.output/chrome-mv3-dev` for `npm run dev`). Production builds use `extension/.output/chrome-mv3`.
 3. Copy its extension ID. Add it to `NEXT_PUBLIC_EXTENSION_IDS` in the web app's `.env.local`, then restart the web app. Multiple trusted development IDs can be comma-separated.
 4. Sign in to the web app. Open the extension and choose **Connect to Tabd**.
 5. Review and click **Connect this extension** on the web page.
@@ -180,4 +182,4 @@ The default branch is `main`. Create a focused feature or fix branch and open a 
 
 Git tracks source code, database migrations, environment templates, and both npm lockfiles. Local secrets, dependency directories, build output, test reports, and review screenshots are ignored. Editor and line-ending conventions are defined in `.editorconfig` and `.gitattributes`.
 
-This is a private project. No open-source license is included.
+The source repository is public, but no open-source license has been granted. Public visibility does not grant general reuse or redistribution rights. See dependency packages for their respective licenses.

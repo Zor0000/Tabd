@@ -4,9 +4,7 @@ The current development branch (`main`) receives security fixes.
 
 ## Reporting a vulnerability
 
-While this repository is private, report a vulnerability through a repository issue visible only to authorized collaborators. Include affected components, reproduction steps, expected impact, and a suggested fix if available. Redact credentials and personal data.
-
-If this repository becomes public, enable GitHub private vulnerability reporting before accepting security reports. Do not disclose an unfixed vulnerability through a public issue.
+Report vulnerabilities privately through [GitHub private vulnerability reporting](https://github.com/Zor0000/Tabd/security/advisories/new). Include affected components, reproduction steps, expected impact, and a suggested fix if available. Redact credentials and personal data. Do not disclose an unfixed vulnerability through a public issue.
 
 ## Credentials and account boundaries
 
