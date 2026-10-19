@@ -6,7 +6,84 @@ A developer-first personal web library. Next.js dashboard first, with a WXT Chro
 
 Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, Supabase/PostgreSQL, and WXT. Save useful links, organize them into collections, and find them again from the dashboard or Chrome extension.
 
-Try the live website at **https://www.tab-dd.tech**. Download the [unpacked extension pilot release](https://github.com/Zor0000/Tabd/releases/tag/extension-v0.1.1) and follow the [installation guide](docs/extension-release.md). Chrome Web Store submission is being prepared; no store listing is live yet. New unpacked IDs need operator registration before pairing.
+## Live website
+
+**[Open Tabd → www.tab-dd.tech](https://www.tab-dd.tech)**
+
+[Sign in or create an account](https://www.tab-dd.tech/login) · [Explore the preview library](https://www.tab-dd.tech/preview) · [Download the Chrome extension pilot](https://github.com/Zor0000/Tabd/releases/tag/extension-v0.1.1)
+
+Use the deployed website directly—no local setup is needed. The public preview lets you explore a sample library without an account; saving and changing resources require signing in. Your own library starts empty.
+
+![Tabd library with resource cards, collections, search, and status filters](docs/screenshots/library.png)
+
+*Website screenshots captured from the deployed site on 20 October 2026. Library screenshots use public preview data, not a personal account.*
+
+## How to use Tabd
+
+### 1. Create your account
+
+1. Open [Sign in](https://www.tab-dd.tech/login), then choose **Sign up**.
+2. Enter your email, password, and password confirmation, then select **Create account**.
+3. If prompted, open the confirmation email to finish setup. Use **Resend confirmation email** if you need another link, and check your spam folder.
+4. Sign in to open your personal library. Returning users can use **Forgot password?** to request a reset link.
+
+![Tabd sign-in page with email and password fields and a Sign up tab](docs/screenshots/sign-in.png)
+
+### 2. Save a useful link
+
+1. In your library, select **Add resource**.
+2. Paste a complete HTTP or HTTPS link into **Website URL**.
+3. Choose a **Collection**, or leave **Inbox — organize later** selected.
+4. Expand **Add details** to add a title, description, status, comma-separated tags, or personal notes.
+5. Select **Save resource**. Tabd retrieves page details and previews in the background; you can save without waiting for them.
+
+If the link is already saved, review the duplicate notice and choose **Update existing resource** to update it. On a phone or tablet, copy the page's URL and use the same **Add resource** flow.
+
+![Add resource panel with URL, collection, optional details, and Save resource controls](docs/screenshots/save-resource.png)
+
+*The form is shown in preview mode for illustration; sign in to persist a save.*
+
+### 3. Organize your library
+
+- Choose **New collection** or the **+** beside **Collections**, enter a name, optionally choose a parent and color, then select **Create collection**. Collections support up to three levels.
+- Open a resource's **…** menu and choose **Edit or move** to change its details or collection.
+- Set a resource's status to **To Explore**, **In Use**, or **Reference**. Use the star to keep it in **Favorites**.
+- Choose **Archive resource** to put a link aside. Find it under **Archived**, then choose **Restore to library** when you need it again.
+- To edit a collection, open it and use its **…** button. Deleting a collection moves its direct resources to **Inbox** and makes its subcollections top-level; it does not delete the resources.
+
+![Design inspiration collection with three saved resources and status filters](docs/screenshots/collection.png)
+
+### 4. Find and revisit links
+
+Type into **Search your library** to match titles, descriptions, website hostnames, tags, and notes. Search respects the selected sidebar section and filters; select **All resources** and clear filters to broaden your results. Archived links are searched from **Archived**.
+
+Use the status tabs and **Filters** to narrow results, the sort menu to change their order, and the grid/list buttons to switch views. **Recently added**, **Recently opened**, and **Favorites** provide shortcuts. Open a resource to visit the original website; opening history records visits made through Tabd.
+
+### 5. Save from desktop Chrome
+
+The extension is currently an **unpacked pilot release**, with no live Chrome Web Store listing. New installations need the Tabd operator to register their extension ID before pairing.
+
+1. Download and extract the ZIP from the [extension release](https://github.com/Zor0000/Tabd/releases/tag/extension-v0.1.1).
+2. Open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select the extracted folder containing `manifest.json`.
+3. Have the Tabd operator register the displayed extension ID. See the [installation and update guide](docs/extension-release.md) for details.
+4. Sign in to [Tabd](https://www.tab-dd.tech/login) in the same browser profile. Open the extension, choose **Connect to Tabd**, and confirm **Connect this extension** on the website.
+5. Visit a normal website, open the extension, choose a collection, and save. Use **Add details** for optional fields. Return to the dashboard to see the saved link; the library refreshes on window focus.
+
+<img src="public/landing/extension-save.png" alt="Tabd Chrome extension popup showing an example page ready to save" width="360" />
+
+*Example popup screenshot used on the Tabd landing page.*
+
+Chrome internal pages cannot be saved. If pairing fails, check that your extension ID has been registered, reload the extension, and refresh the connection page in the same browser profile. Reconnect when access expires.
+
+### 6. Adjust settings and connect agents
+
+Open **Settings** to choose a light or dark appearance, default resource view, and default save collection. These preferences are remembered in the current browser. Choose **Export library as JSON** to download your resources, collections, tags, and notes.
+
+For coding-agent access, choose **Settings → Connect coding agents** and follow the [MCP setup guide](docs/mcp.md). Agent access is read-only and uses separate, revocable tokens. Use **Revoke extension access** in Settings to invalidate extension connections; signing out of the website alone does not revoke them.
+
+---
+
+The sections below cover local development, configuration, and deployment.
 
 ## Current status
 
