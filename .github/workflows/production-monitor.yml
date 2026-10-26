@@ -20,4 +20,11 @@ jobs:
         with:
           node-version-file: .nvmrc
       - name: Check production pages and authentication boundaries
+        if: ${{ !cancelled() }}
         run: node scripts/production-smoke.mjs
+      - name: Check Supabase database and anonymous data isolation
+        if: ${{ !cancelled() }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/supabase-health.mjs
