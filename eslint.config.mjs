@@ -5,6 +5,12 @@ export default defineConfig([
   ...next,
   ...ts,
   globalIgnores([
+    "artifacts/**",
+    "coverage/**",
+    "out/**",
+    "dist/**",
+    "build/**",
+    "launch-video/**",
     ".next/**",
     ".next-test/**",
     "extension/.output/**",

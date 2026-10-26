@@ -18,7 +18,8 @@ async function handleGET(request: Request) {
       .from("bookmarks")
       .select("*")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false });
     const q = params.get("q")?.trim();
     if (q)
       query = query.textSearch("search_document", q, {

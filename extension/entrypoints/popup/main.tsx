@@ -267,6 +267,11 @@ function Popup() {
             ),
           )
         : { ...values, url, favicon_url: favicon };
+      if (duplicate && Object.keys(payload).length === 0) {
+        // The duplicate response already confirmed this page is saved.
+        setSaved(true);
+        return;
+      }
       const response = await fetch(
         `${appUrl}/api/resources${duplicate ? "/" + encodeURIComponent(duplicate.id) : ""}`,
         {

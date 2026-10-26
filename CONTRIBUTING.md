@@ -15,6 +15,8 @@ Create a branch from `main`, for example `git switch -c feat/collection-navigati
 ```sh
 npm run lint
 npm run typecheck
+npm audit --audit-level=high
+npm audit --prefix extension --audit-level=high
 npm test
 npm run build
 npm run build --prefix extension
