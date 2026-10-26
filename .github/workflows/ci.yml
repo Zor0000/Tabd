@@ -37,6 +37,10 @@ jobs:
         run: npm ci
       - name: Install extension dependencies
         run: npm ci --prefix extension
+      - name: Check dashboard dependency advisories
+        run: npm audit --audit-level=high
+      - name: Check extension dependency advisories
+        run: npm audit --prefix extension --audit-level=high
       - name: Lint
         run: npm run lint
       - name: Check dashboard types

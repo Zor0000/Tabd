@@ -17,12 +17,13 @@ export async function actor(request: Request) {
   )
     throw new ApiError("Connect Supabase to use your personal library.", 503);
   const bearer = request.headers.get("authorization");
-  if (bearer) {
+  if (bearer !== null) {
     if (!process.env.SUPABASE_SECRET_KEY)
       throw new ApiError("Extension access is not configured.", 503);
-    const token = bearer.replace(/^Bearer /, "");
-    if (!/^tabd_[a-f0-9]{64}$/.test(token))
+    const match = /^Bearer +(tabd_[a-f0-9]{64})$/i.exec(bearer);
+    if (!match)
       throw new ApiError("Reconnect the extension to your account.", 401);
+    const token = match[1];
     const db = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SECRET_KEY,
@@ -34,7 +35,9 @@ export async function actor(request: Request) {
       .eq("token_hash", createHash("sha256").update(token).digest("hex"))
       .gt("expires_at", new Date().toISOString())
       .maybeSingle();
-    if (error || !data)
+    if (error)
+      throw new ApiError("Extension access is temporarily unavailable.", 503);
+    if (!data)
       throw new ApiError(
         "Extension link expired. Reconnect your account.",
         401,
@@ -75,20 +78,24 @@ export function failure(error: unknown) {
     return json({ error: error.message }, error.status);
   return json({ error: "Something went wrong. Please try again." }, 500);
 }
-export async function body(request: Request) {
+export async function body(request: Request): Promise<unknown> {
   const reader = request.body?.getReader();
   if (!reader) throw new ApiError("Request body is required.");
   const chunks: Uint8Array[] = [];
   let bytes = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    bytes += value.byteLength;
-    if (bytes > 20000) {
-      await reader.cancel();
-      throw new ApiError("Request is too large.", 413);
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > 20000) {
+        await reader.cancel();
+        throw new ApiError("Request is too large.", 413);
+      }
+      chunks.push(value);
     }
-    chunks.push(value);
+  } finally {
+    reader.releaseLock();
   }
   const text = Buffer.concat(chunks).toString("utf8");
   try {
@@ -103,11 +110,12 @@ export async function ownedCollection(
   id: string | null | undefined,
 ) {
   if (!id) return;
-  const { data } = await db
+  const { data, error } = await db
     .from("collections")
     .select("id")
     .eq("id", id)
     .eq("user_id", userId)
     .maybeSingle();
+  if (error) throw error;
   if (!data) throw new ApiError("Collection not found.", 404);
 }

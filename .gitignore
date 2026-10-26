@@ -27,6 +27,10 @@ coverage/
 playwright-report/
 test-results/
 /artifacts/
+/launch-video/
+/docs/codebase-review-*.md
+/docs/chrome-web-store/privacy-policy-draft.md
+/docs/chrome-web-store/submission.md
 .impeccable/hook.cache.json
 .impeccable/mocks/
 .impeccable/review/

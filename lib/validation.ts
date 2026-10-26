@@ -37,24 +37,38 @@ export const resourceSchema = z.object({
     })
     .default({}),
 });
-export const resourcePatch = z.object({
-  url: resourceSchema.shape.url.optional(),
-  title: resourceSchema.shape.title.removeDefault().optional(),
-  description: resourceSchema.shape.description.removeDefault().optional(),
-  collection_id: resourceSchema.shape.collection_id.removeDefault().optional(),
-  tags: resourceSchema.shape.tags.removeDefault().optional(),
-  personal_note: resourceSchema.shape.personal_note.removeDefault().optional(),
-  status: resourceSchema.shape.status.removeDefault().optional(),
-  favicon_url: resourceSchema.shape.favicon_url.removeDefault().optional(),
-  preview_image_url: resourceSchema.shape.preview_image_url
-    .removeDefault()
-    .optional(),
-  metadata_snapshot: resourceSchema.shape.metadata_snapshot
-    .removeDefault()
-    .optional(),
-  is_favorite: z.boolean().optional(),
-  is_archived: z.boolean().optional(),
-});
+const hasUpdates = (value: Record<string, unknown>) =>
+  Object.values(value).some((field) => field !== undefined);
+
+export const resourcePatch = z
+  .object({
+    url: resourceSchema.shape.url.optional(),
+    title: resourceSchema.shape.title.removeDefault().optional(),
+    description: resourceSchema.shape.description.removeDefault().optional(),
+    collection_id: resourceSchema.shape.collection_id
+      .removeDefault()
+      .optional(),
+    tags: resourceSchema.shape.tags.removeDefault().optional(),
+    personal_note: resourceSchema.shape.personal_note
+      .removeDefault()
+      .optional(),
+    status: resourceSchema.shape.status.removeDefault().optional(),
+    favicon_url: resourceSchema.shape.favicon_url.removeDefault().optional(),
+    preview_image_url: resourceSchema.shape.preview_image_url
+      .removeDefault()
+      .optional(),
+    metadata_snapshot: resourceSchema.shape.metadata_snapshot
+      .removeDefault()
+      .optional(),
+    is_favorite: z.boolean().optional(),
+    is_archived: z.boolean().optional(),
+  })
+  .refine(hasUpdates, "Provide at least one resource field to update.");
+
+export const resourceUpdateSchema = z.union([
+  z.object({ action: z.literal("open") }).strict(),
+  resourcePatch,
+]);
 export const collectionSchema = z.object({
   name: z.string().trim().min(1).max(60),
   parent_id: z.uuid().nullable().default(null),
@@ -63,8 +77,10 @@ export const collectionSchema = z.object({
     .default("violet"),
 });
 
-export const collectionPatch = z.object({
-  name: collectionSchema.shape.name.optional(),
-  parent_id: collectionSchema.shape.parent_id.removeDefault().optional(),
-  color: collectionSchema.shape.color.removeDefault().optional(),
-});
+export const collectionPatch = z
+  .object({
+    name: collectionSchema.shape.name.optional(),
+    parent_id: collectionSchema.shape.parent_id.removeDefault().optional(),
+    color: collectionSchema.shape.color.removeDefault().optional(),
+  })
+  .refine(hasUpdates, "Provide at least one collection field to update.");

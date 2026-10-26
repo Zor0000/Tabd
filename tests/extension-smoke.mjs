@@ -228,6 +228,20 @@ try {
   assert.deepEqual(requests.at(-1).body, { title: "An updated title" });
   await page.close();
 
+  // Confirming an unchanged duplicate must not send an empty PATCH.
+  page = await open();
+  await page.getByRole("button", { name: "Save page", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Save changes", exact: true }),
+  ).toBeVisible();
+  const beforeUnchangedSave = requests.length;
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Changes saved." }),
+  ).toBeVisible();
+  assert.equal(requests.length, beforeUnchangedSave);
+  await page.close();
+
   // An intentional edit made before duplicate detection must survive the response.
   page = await open();
   await page.getByRole("button", { name: "Add details" }).click();

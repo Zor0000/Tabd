@@ -25,5 +25,14 @@
     ".next-test/types/**/*.ts",
     ".next-test/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "extension"]
+  "exclude": [
+    "node_modules",
+    "extension",
+    "launch-video",
+    "artifacts",
+    "coverage",
+    "out",
+    "dist",
+    "build"
+  ]
 }
