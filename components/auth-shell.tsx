@@ -1,3 +1,4 @@
+import { SupportLinks } from "@/components/support-links";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AuthWordmark } from "@/components/auth-wordmark";
@@ -26,7 +27,9 @@ export function AuthShell({
           <p>{description}</p>
           {children}
         </div>
-        <p className="auth-account-footer">Save something good.</p>
+        <div className="auth-account-footer">
+          <SupportLinks />
+        </div>
       </section>
     </main>
   );

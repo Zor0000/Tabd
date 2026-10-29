@@ -1,4 +1,5 @@
 "use client";
+import { SupportLinks } from "@/components/support-links";
 import { AccountAccess } from "@/components/account-access";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -1035,6 +1036,7 @@ export function Dashboard({
             Preferences are remembered in this browser.
           </p>
           <div className="settings-divider" />
+          <SupportLinks />
           <h3>Your library is yours.</h3>
           <p className="settings-copy">
             Take your resources, collections, tags, and notes with you.
