@@ -145,7 +145,7 @@ export default function PrivacyPage() {
       </p>
       <p>
         Tabd’s use of data obtained through the extension follows the{" "}
-        <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data">
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data-faq">
           Chrome Web Store User Data Policy
         </a>
         , including its Limited Use requirements. We use this data only for the
