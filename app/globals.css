@@ -3221,3 +3221,7 @@ button svg {
   .auth-split .auth-sculpture { display: none; }
   .auth-account-inner .brand { display: flex; margin-bottom: 24px; }
 }
+
+.support-links { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.support-links a { text-decoration: underline; text-underline-offset: 4px; }
+.support-links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }

@@ -1,3 +1,4 @@
+import { SupportLinks } from "@/components/support-links";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -308,6 +309,7 @@ export function LandingPage() {
           tabd<span>.</span>
         </Link>
         <span>Your useful corner of the internet.</span>
+        <SupportLinks />
         <Link href="/login">
           Make yourself at home <ArrowUpRight size={15} />
         </Link>

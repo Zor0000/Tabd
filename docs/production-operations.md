@@ -50,3 +50,20 @@ Acceptance found and repaired two production configuration issues: the app origi
 Acceptance also reproduced a screenshot route startup crash: Next's serverless trace omitted `playwright-core/browsers.json`. The explicit tracing include and `scripts/check-preview-bundle.mjs` guard against that packaging regression. CI imports Playwright from an isolated directory containing only traced dependencies.
 
 For a controlled account-limit check, run `TABD_VERIFY_LIMITS=1 node --env-file=.env.local scripts/production-acceptance.mjs`. This adds a bounded burst of invalid writes using only the disposable test account and checks 429, Retry-After, and X-Request-Id.
+
+## Privacy and support requests
+
+Public entry points: `/privacy` and `/support`. Operator: Neeraj Chormale; private inbox: `neerajcwork@gmail.com`. Never request passwords, recovery links, or connection tokens. Do not put personal data in public issues.
+
+### Verified account deletion
+
+1. Receive a deletion request through the support inbox. Verify control of the account email through a reply and explicit confirmation. An email header or knowledge of an address alone is not proof. If the person cannot access that mailbox, resolve ownership privately before making changes.
+2. Offer a library export before deletion. Confirm the correct production project and the exact Auth user UUID. Record only the minimum request details in the private support record.
+3. In Supabase Auth, suspend the user's ability to sign in and revoke sessions. Delete that user's extension and MCP tokens. Do not delete the Auth user yet: Storage objects must be removed first.
+4. In Supabase Storage, open the private `website-previews` bucket. Remove every object under the exact `<user UUID>/` prefix, including old or orphaned previews. Use the Storage UI or API, never direct SQL deletion of `storage.objects`. Check all pages and nested folders. Verify that this prefix is empty before continuing.
+5. Permanently delete only the verified Auth user through Supabase Auth. Foreign keys cascade to `profiles`, `collections`, `bookmarks`, `extension_tokens`, `mcp_tokens`, and `taste_profiles`. Verify that no rows for that UUID remain in those tables. Check the preview prefix again for files written by requests already in flight; remove any remaining objects.
+6. If any removal fails, keep the request open and retry. Do not tell the user that deletion is complete until active-system checks pass. Never restore access or recreate data as a workaround.
+7. Confirm completion privately. Explain that provider backups and operational logs follow their own retention processes. Do not promise an unverified erasure period. Keep only the support record needed to document handling; remove unnecessary attachments and copies of library data.
+8. If a backup is restored later, reapply completed deletion requests before reopening access. Check provider log and backup settings when reviewing this procedure or responding to a specific retention question.
+
+This is a manual procedure, not an automated deletion job. No customer account should be deleted to test these instructions. Validate it with a disposable account before the first customer request.
