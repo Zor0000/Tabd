@@ -59,3 +59,10 @@
     margin: 40px auto 56px;
   }
 }
+
+.content ul {
+  list-style: disc;
+}
+.content ol {
+  list-style: decimal;
+}
